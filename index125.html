@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yao的打工日历</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+            line-height: 1.5;
+            font-weight: 400;
+            background-color: #fff5f7;
+            color: #222;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* === 暗色模式样式 === */
+        body.dark {
+            background-color: #1a1a1a;
+            color: #eee;
+        }
+
+        body.dark .profile-card,
+        body.dark .work-display,
+        body.dark .salary-clicker,
+        body.dark .modal {
+            background: #2d2d2d;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        body.dark .btn-secondary {
+            background: #3c3c3c;
+            color: #ddd;
+            border-color: #555;
+        }
+
+        body.dark .interactive-text {
+            color: #aaa;
+        }
+
+        body.dark .subtitle,
+        body.dark p {
+            color: #ccc;
+        }
+
+        body.dark .heart {
+            color: #ff477e;
+        }
+
+        #root {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            position: relative;
+        }
+        
+        .heart-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        
+        .heart {
+            position: absolute;
+            color: #ff6f91;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            opacity: 0;
+            animation-duration: 15s;
+            animation-timing-function: ease-in-out;
+            animation-iteration-count: infinite;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            z-index: 1;
+            position: relative;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .header .subtitle {
+            color: #666;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .header .subtitle i {
+            animation: bounce 2s infinite;
+            color: #ff6f91;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .profile-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            width: 320px;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .profile-card:hover {
+            transform: translateY(-10px) rotate(1deg);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+        }
+        
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #ffd1dc;
+            margin: 0 auto 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .profile-card p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .interactive-text {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #888;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .interactive-text:hover {
+            color: #000;
+            transform: rotate(1deg);
+        }
+        
+        .random-text {
+            margin-top: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            min-height: 24px;
+            display: inline-block;
+            transition: all 0.5s;
+        }
+        
+        .work-display {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            width: 320px;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .work-display:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+        }
+        
+        .work-display p {
+            font-size: 1.1rem;
+            margin-bottom: 0;
+        }
+        
+        .dynamic-work {
+            font-size: 1.1rem;
+            font-weight: 600;
+            min-height: 24px;
+            display: inline-block;
+            transition: all 0.5s;
+            margin-left: 5px;
+        }
+        
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            font-family: "Noto Sans SC", sans-serif;
+        }
+        
+        .btn-primary {
+            background: #ff6f91;
+            color: white;
+            box-shadow: 0 4px 8px rgba(255,111,145,0.4);
+        }
+        
+        .btn-primary:hover {
+            background: #ff4c7a;
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(255,111,145,0.6);
+        }
+        
+        .btn-secondary {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            color: #666;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .btn-secondary:hover {
+            background: #e9ecef;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .salary-clicker {
+            width: 100%;
+            max-width: 400px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            padding: 30px;
+            text-align: center;
+            margin: 30px auto;
+        }
+        
+        .salary-clicker h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #ff6f91;
+        }
+        
+        .salary-clicker .subtitle {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+        
+        .salary-amount {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ff6f91;
+            margin: 20px 0;
+            transition: transform 0.3s;
+        }
+        
+        .salary-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .salary-main {
+            background: #ff6f91;
+            color: white;
+        }
+        
+        .salary-main:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(255,111,145,0.3);
+        }
+        
+        .salary-main:active {
+            transform: scale(0.95);
+        }
+        
+        .reset-btn {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .reset-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .modal-header h3 {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #222;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .modal-close {
+            color: #666;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .modal-close:hover {
+            color: #000;
+        }
+        
+        .modal-content {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            text-align: center;
+            line-height: 1.6;
+        }
+        
+        .highlight {
+            font-weight: 600;
+            color: #ff6f91;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .toast.show {
+            opacity: 1;
+        }
+
+        /* ===== 暗色模式按钮（左上角）===== */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;   /* 在左上角 */
+            background: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ff6f91;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.08);
+        }
+
+        .theme-toggle.dark-mode-active {
+            background: #333;
+            color: #ffd1dc;
+        }
+
+        /* ===== 右侧悬浮日历 - 玻璃态效果 ===== */
+        .calendar-sidebar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 280px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px); /* Safari 支持 */
+            border-radius: 16px;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.1),
+                0 0 15px rgba(255, 111, 145, 0.15) inset;
+            padding: 20px;
+            font-size: 0.95rem;
+            z-index: 10;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 111, 145, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .calendar-sidebar:hover {
+            transform: translateY(-2px);
+            box-shadow:
+                0 12px 40px rgba(0, 0, 0, 0.15),
+                0 0 20px rgba(255, 111, 145, 0.2) inset;
+        }
+
+        .calendar-sidebar h3 {
+            margin: 0 0 15px;
+            font-size: 1.1rem;
+            color: #ff6f91;
+        }
+
+        .calendar-body p {
+            margin: 8px 0;
+            line-height: 1.5;
+            color: #222;
+        }
+
+        /* 暗色模式适配 - 日历 */
+        body.dark .calendar-sidebar {
+            background: rgba(45, 45, 45, 0.7);
+            color: #eee;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 15px rgba(255, 111, 145, 0.15) inset;
+            border: 1px solid rgba(255, 111, 145, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        body.dark .calendar-body p {
+            color: #ccc;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .header .subtitle {
+                font-size: 1rem;
+            }
+            
+            .profile-card, .work-display {
+                width: 100%;
+                max-width: 320px;
+            }
+            
+            .button-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 250px;
+            }
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+                opacity: 0;
+            }
+            25% {
+                transform: translate(5px, -15px) rotate(5deg);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translate(-5px, -30px) rotate(-5deg);
+                opacity: 0.4;
+            }
+            75% {
+                transform: translate(3px, -45px) rotate(3deg);
+                opacity: 0.3;
+            }
+            100% {
+                transform: translate(0, -60px) rotate(0deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <!-- 暗色模式切换按钮（左上角） -->
+        <button class="theme-toggle" id="themeToggle">
+            <i class="fa-solid fa-moon"></i>
+        </button>
+
+        <div class="container">
+            <!-- 心形背景 -->
+            <div class="heart-background" id="heartBackground"></div>
+            
+            <!-- 标题区域 -->
+            <div class="header">
+                <h1>Hi，我是Yao</h1>
+                <div class="subtitle">
+                    来自 Content·Model BPO & VidaXL 徒步社社长 & 电竞游戏主理人
+                    <i class="fa-solid fa-rocket"></i>
+                </div>
+            </div>
+            
+            <!-- 主要内容区域 -->
+            <div class="main-content">
+                <!-- 个人信息卡片 -->
+                <div class="profile-card">
+                    <div class="avatar">😐</div>
+                    <p>白天管理外包，晚上管理徒步社，周末管理不了自己的作息。</p>
+                    <div class="interactive-text" id="randomTextTrigger">
+                        👉 点我获取今日的胡言乱语
+                    </div>
+                    <div class="random-text" id="randomText"></div>
+                </div>
+                
+                <!-- 工作内容显示 -->
+                <div class="work-display">
+                    <p>
+                        我正在做：
+                        <span class="dynamic-work" id="dynamicWork"></span>
+                    </p>
+                </div>
+
+                <!-- 下班倒计时 -->
+                <div class="work-display">
+                    <p>
+                        ⏳ 离下班还有：
+                        <span class="dynamic-work" id="countdown">正在计算...</span>
+                    </p>
+                </div>
+            </div>
+            
+            <!-- 按钮区域 -->
+            <div class="button-container">
+                <button class="btn btn-primary" id="emailBtn">📧 发送邮件</button>
+                <button class="btn btn-secondary" id="locationBtn">📍 快速找到我</button>
+            </div>
+            
+            <!-- 薪资加薪器 -->
+            <div class="salary-clicker">
+                <h2>💰 薪资加薪器</h2>
+                <p class="subtitle">每次点击 +500 元</p>
+                <div class="salary-amount" id="salaryAmount">¥0</div>
+                <div style="display:flex;gap:10px;justify-content:center;margin-top:15px;">
+                    <button class="salary-btn salary-main" id="salaryBtn">点我 +500</button>
+                    <button class="salary-btn reset-btn" id="resetBtn">🔁 重置数据</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== 右侧悬浮日历 - 玻璃态效果 =========== -->
+        <div class="calendar-sidebar">
+            <div class="calendar-header">
+                <h3>📅 Yao 的打工日历</h3>
+            </div>
+            <div class="calendar-body">
+                <p><strong>📆 当前时间</strong></p>
+                <p id="dateDisplay">-</p>
+                <p id="lunarDisplay">-</p>
+                <hr style="border:0;border-top:1px solid #eee;margin:10px 0;">
+                <p>💼 距发工资：<span id="salaryCountdown">加载中...</span></p>
+                <p>🎄 距元旦：<span id="countdownnewYear">-</span></p>
+                <p>🐉 距春节：<span id="countdownspring">-</span></p>
+                <p>🌸 距清明：<span id="countdownqingming">-</span></p>
+                <p>🛠️ 距劳动节：<span id="countdownlabor">-</span></p>
+                <p>🥢 距端午节：<span id="countdowndragonBoat">-</span></p>
+                <p>🎑 距中秋节：<span id="countdownmidAutumn">-</span></p>
+                <p>🇨🇳 距国庆节：<span id="countdownnational">-</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 提示 -->
+    <div class="toast" id="toast">操作成功</div>
+
+    <script>
+        // ===== 初始薪资加载 =====
+        let salary = parseInt(localStorage.getItem('salary')) || 0;
+        let unlockedAchievements = JSON.parse(localStorage.getItem('unlocked_achievements') || '[]');
+
+        // ===== 心形背景 =====
+        function createHearts() {
+            const heartBackground = document.getElementById('heartBackground');
+            const heartCount = 12;
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.innerHTML = '❤';
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                const scale = 0.3 + Math.random() * 0.7;
+                const duration = 8 + Math.random() * 12;
+                const delay = Math.random() * 5;
+                const opacity = 0.1 + Math.random() * 0.3;
+                heart.style.left = `${x}%`;
+                heart.style.top = `${y}%`;
+                heart.style.fontSize = `${24 * scale}px`;
+                heart.style.opacity = opacity;
+                heart.style.animation = `float ${duration}s ease-in-out ${delay}s infinite`;
+                heartBackground.appendChild(heart);
+            }
+        }
+
+        // ===== 随机语录系统 =====
+        function setupRandomText() {
+          const trigger = document.getElementById('randomTextTrigger');
+          const output = document.getElementById('randomText');
+          const messages = [
+            "你今天看起来像是刚睡醒，但很有魅力。",
+            "别卷了，喝口水吧兄弟。",
+            "如果人生有撤销键，你现在会按吗？",
+            "今天适合摸鱼（其实每天都适合）。",
+            "加载中……加载失败，请重试你的生活。"
+          ];
+
+          function typeWriter(text, el) {
+            el.textContent = '';
+            let i = 0;
+            const timer = setInterval(() => {
+              if (i < text.length) {
+                el.textContent += text[i];
+                i++;
+              } else {
+                clearInterval(timer);
+              }
+            }, 30);
+          }
+
+          trigger.addEventListener('click', () => {
+            const msg = messages[Math.floor(Math.random() * messages.length)];
+            const colors = ["#e74c3c", "#2ecc71", "#3498db", "#f1c40f", "#9b59b6"];
+            output.style.color = colors[Math.floor(Math.random() * colors.length)];
+            typeWriter(msg, output);
+          });
+        }
+
+        // ===== 动态工作内容 =====
+        function setupDynamicWork() {
+          const tasks = ["整理模型文件", "审核外包作品", "优化插件工具", "组织徒步活动", "喝咖啡思考人生", "写奇怪的小工具"];
+          const el = document.getElementById('dynamicWork');
+          let idx = 0;
+          const update = () => {
+            el.style.opacity = 0;
+            setTimeout(() => {
+              el.textContent = tasks[idx];
+              el.style.color = ["#e74c3c", "#2ecc71", "#3498db", "#f1c40f"][Math.floor(Math.random()*4)];
+              el.style.opacity = 1;
+              idx = (idx + 1) % tasks.length;
+            }, 300);
+          };
+          update();
+          setInterval(update, 2500);
+        }
+
+        // ===== 获取 ISO 周数（国际标准）=====
+        function getISOWeek(date) {
+          const target = new Date(date.valueOf());
+          const dayOfWeek = (target.getDay() + 6) % 7; // 周一为第一天
+          target.setDate(target.getDate() - dayOfWeek + 3);
+          const firstThursday = new Date(target.getFullYear(), 0, 4);
+          const weekDiff = (target - firstThursday) / (7 * 24 * 60 * 60 * 1000);
+          return 1 + Math.round(weekDiff);
+        }
+
+        // ===== 下班倒计时（9:00 - 18:00）=====
+        function setupCountdown() {
+          const countdownEl = document.getElementById('countdown');
+          
+          function updateCountdown() {
+            const now = new Date();
+            const startOfDay = new Date(now);
+            startOfDay.setHours(0, 0, 0, 0);
+
+            const workStart = new Date(startOfDay);
+            workStart.setHours(9, 0, 0, 0); // 9:00 上班
+
+            const workEnd = new Date(startOfDay);
+            workEnd.setHours(18, 0, 0, 0); // 18:00 下班
+
+            if (now < workStart) {
+              const diff = workStart - now;
+              const hours = Math.floor(diff / (1000 * 60 * 60));
+              const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+              countdownEl.textContent = `😴 还没上班，${hours}h ${minutes}m 后开始搬砖`;
+            } 
+            else if (now >= workStart && now < workEnd) {
+              const diff = workEnd - now;
+              const hours = Math.floor(diff / (1000 * 60 * 60));
+              const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+              const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+              countdownEl.textContent = `${hours}h ${minutes}m ${seconds}s`;
+            } 
+            else {
+              countdownEl.textContent = '🎉 可以下班啦！快去徒步吧！';
+            }
+          }
+
+          updateCountdown();
+          setInterval(updateCountdown, 1000);
+        }
+
+        // ===== 设置日历显示（真实时间 + 自动跨年 + 玻璃态）=====
+        function setupCalendar() {
+          function updateCalendar() {
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const year = now.getFullYear();
+            const month = now.getMonth() + 1;
+            const date = now.getDate();
+            const dayOfWeek = ['日', '一', '二', '三', '四', '五', '六'][now.getDay()];
+            const weekNum = getISOWeek(now);
+
+            // 显示公历
+            document.getElementById('dateDisplay').textContent = `${year} 年 ${month} 月 ${date} 日 星期${dayOfWeek}`;
+            document.getElementById('lunarDisplay').textContent = `农历${year}年 · 生肖蛇 · 第${weekNum}周`;
+
+            // 发工资倒计时（每月10号）
+            let payDate = new Date(year, month - 1, 10);
+            if (today > payDate) payDate = new Date(year, month, 10);
+            const salaryDiff = Math.ceil((payDate - today) / (1000 * 60 * 60 * 24));
+            document.getElementById('salaryCountdown').textContent = 
+              salaryDiff === 0 ? '今天发工资！🎉' : `${salaryDiff} 天`;
+
+            // 节日列表（用于构造日期）
+            const holidays = [
+              { id: 'newYear',     date: new Date(0, 0, 1)   },
+              { id: 'spring',      date: new Date(0, 0, 29)  },
+              { id: 'qingming',    date: new Date(0, 3, 5)   },
+              { id: 'labor',       date: new Date(0, 4, 1)   },
+              { id: 'dragonBoat',  date: new Date(0, 4, 31)  },
+              { id: 'midAutumn',   date: new Date(0, 9, 6)   },
+              { id: 'national',    date: new Date(0, 9, 1)   }
+            ];
+
+            // 计算每个节日距离最近一次
+            holidays.forEach(h => {
+              let holidayDate = new Date(year, h.date.getMonth(), h.date.getDate());
+              if (holidayDate < today) {
+                holidayDate = new Date(year + 1, h.date.getMonth(), h.date.getDate());
+              }
+              const diff = Math.ceil((holidayDate - today) / (1000 * 60 * 60 * 24));
+              const elem = document.getElementById(`countdown${h.id}`);
+              if (elem) elem.textContent = `${diff} 天`;
+            });
+          }
+
+          updateCalendar();
+          setInterval(() => {
+            const now = new Date();
+            if (now.getSeconds() === 0 && [0, 30].includes(now.getMinutes())) {
+              updateCalendar(); // 每半小时刷新
+            }
+          }, 60000);
+        }
+
+        // ===== 成就列表 =====
+        const achievements = [
+          { at: 5000, title: '🎓 实习生转正', content: '恭喜你熬过试用期！\n现正式加入“背锅预备队”！' },
+          { at: 10000, title: '🚶‍♂️ 徒步社见习领队', content: '检测到你周末总在户外…\n已自动晋升为徒步社见习干部。' },
+          { at: 15000, title: '💻 假装很忙 Lv.3', content: 'AI 观察到你频繁切屏\n授予【表面勤奋】大师称号。' },
+          { at: 20000, title: '☕ 咖啡因成瘾者', content: '本周第 8 杯咖啡摄入成功！\n建议改名为：BPO 能量永动机。' },
+          { at: 30000, title: '🎮 电竞精神领袖', content: '虽然没赢几把，但气势到位了。\n封号：公司电竞名誉主理人。' },
+          { at: 50000, title: '👑 摸鱼教父', content: '你已达成传说级境界：\n看起来很忙，其实啥也没干。' }
+        ];
+
+        // ===== 显示成就弹窗（必须确认）=====
+        function showAchievement(title, content) {
+          if (document.querySelector('.modal-overlay')) return;
+          const modal = document.createElement('div');
+          modal.className = 'modal-overlay';
+          modal.innerHTML = `
+            <div class="modal">
+              <h3>${title}</h3>
+              <div class="modal-content">${content.replace(/\n/g, '<br>')}</div>
+              <div style="text-align:center;margin-top:20px;">
+                <button class="btn btn-primary" id="confirmAchievement">确认并继续搬砖</button>
+              </div>
+            </div>
+          `;
+          document.body.appendChild(modal);
+          document.getElementById('confirmAchievement').addEventListener('click', () => {
+            document.body.removeChild(modal);
+          });
+          showToast(`🏆 达成新成就：${title}`);
+        }
+
+        // ===== 检查是否解锁成就 =====
+        function checkAndUnlockAchievement(currentSalary) {
+          for (const ach of achievements) {
+            if (currentSalary >= ach.at && !unlockedAchievements.includes(ach.at)) {
+              showAchievement(ach.title, ach.content);
+              unlockedAchievements.push(ach.at);
+              localStorage.setItem('unlocked_achievements', JSON.stringify(unlockedAchievements));
+              break;
+            }
+          }
+        }
+
+        // ===== 薪资系统 =====
+        function setupSalarySystem() {
+          const amountEl = document.getElementById('salaryAmount');
+          const addBtn = document.getElementById('salaryBtn');
+          const resetBtn = document.getElementById('resetBtn');
+
+          function updateDisplay() {
+            amountEl.textContent = new Intl.NumberFormat('zh-CN', {
+              style: 'currency',
+              currency: 'CNY',
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0
+            }).format(salary).replace('CN¥', '¥');
+          }
+
+          addBtn.addEventListener('click', () => {
+            salary += 500;
+            localStorage.setItem('salary', salary);
+            updateDisplay();
+            amountEl.style.transform = 'scale(1.1)';
+            setTimeout(() => amountEl.style.transform = 'scale(1)', 300);
+            checkAndUnlockAchievement(salary);
+          });
+
+          resetBtn.addEventListener('click', () => {
+            if (confirm('⚠️ 确定要重置所有数据吗？\\n\\n- 薪资将变为 ¥0\\n- 所有成就将清空\\n此操作不可撤销')) {
+              salary = 0;
+              localStorage.removeItem('salary');
+              localStorage.removeItem('unlocked_achievements');
+              unlockedAchievements = [];
+              updateDisplay();
+              showToast('🔄 数据已重置，重新开始搬砖吧！');
+            }
+          });
+
+          updateDisplay();
+        }
+
+        // ===== 邮箱 & 位置 =====
+        function setupEmail() {
+          document.getElementById('emailBtn').addEventListener('click', () => {
+            window.location.href = 'mailto:Ma.Yao@habatrading.com';
+            showToast('📧 正在打开邮件客户端...');
+          });
+        }
+
+        function setupLocationModal() {
+          document.getElementById('locationBtn').addEventListener('click', () => {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+              <div class="modal">
+                <div class="modal-header">
+                  <h3>我的位置</h3>
+                  <div class="modal-close"><i class="fa-solid fa-times"></i></div>
+                </div>
+                <div class="modal-content">
+                  <p>📍 2楼</p>
+                  <p class="highlight">BPO办公室（原Turkey会议室）</p>
+                </div>
+                <div style="text-align:center;">
+                  <button class="btn btn-primary" id="modalOk">知道了</button>
+                </div>
+              </div>
+            `;
+            document.body.appendChild(modal);
+            const close = () => document.body.removeChild(modal);
+            modal.querySelector('.modal-close').addEventListener('click', close);
+            modal.querySelector('#modalOk').addEventListener('click', close);
+          });
+        }
+
+        // ===== 暗色模式 =====
+        function setupThemeToggle() {
+          const toggle = document.getElementById('themeToggle');
+          const icon = toggle.querySelector('i');
+          const isDark = localStorage.getItem('theme') === 'dark';
+
+          if (isDark) {
+            document.body.classList.add('dark');
+            icon.className = 'fa-solid fa-sun';
+            toggle.classList.add('dark-mode-active');
+          }
+
+          toggle.addEventListener('click', () => {
+            const isNowDark = document.body.classList.toggle('dark');
+            if (isNowDark) {
+              icon.className = 'fa-solid fa-sun';
+              toggle.classList.add('dark-mode-active');
+              localStorage.setItem('theme', 'dark');
+            } else {
+              icon.className = 'fa-solid fa-moon';
+              toggle.classList.remove('dark-mode-active');
+              localStorage.setItem('theme', 'light');
+            }
+          });
+        }
+
+        // ===== Toast 提示 =====
+        function showToast(message) {
+          const toast = document.getElementById('toast');
+          toast.textContent = message;
+          toast.classList.add('show');
+          setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // ===== 初始化 =====
+        document.addEventListener('DOMContentLoaded', () => {
+          createHearts();
+          setupRandomText();
+          setupDynamicWork();
+          setupCountdown();
+          setupCalendar();
+          setupEmail();
+          setupLocationModal();
+          setupSalarySystem();
+          setupThemeToggle();
+        });
+    </script>
+</body>
+</html>
