@@ -541,17 +541,13 @@
                 </div>
             </div>
 
-            <!-- ===== 午餐选择器（固定菜单）===== -->
-            <div class="salary-clicker" style="background:#fff8f9;border:1px solid #ffe6e9;">
-                <h2 style="color:#e74c3c;">🍚 今天中午吃什么</h2>
+            <!-- ===== 中午吃什么（UI 统一）===== -->
+            <div class="salary-clicker" id="lunchPicker">
+                <h2>🍚 今天中午吃什么</h2>
                 <p class="subtitle">拯救选择困难症</p>
-                <div class="salary-amount" id="foodResult" style="font-size:1.8rem;color:#e74c3c;">
-                    🤔 等你点我
-                </div>
-                <div style="text-align:center;margin-top:15px;">
-                    <button class="salary-btn salary-main" id="chooseFoodBtn" style="background:#e74c3c;">
-                        开始选择
-                    </button>
+                <div class="salary-amount" id="foodResult">🤔 等你点我</div>
+                <div style="display:flex;gap:10px;justify-content:center;margin-top:15px;">
+                    <button class="salary-btn salary-main" id="chooseFoodBtn">开始选择</button>
                 </div>
             </div>
         </div>
@@ -628,7 +624,7 @@
               if (i < text.length) {
                 el.textContent += text[i];
                 i++;
-              } else {
+              }  else {
                 clearInterval(timer);
               }
             }, 30);
@@ -670,7 +666,7 @@
           return 1 + Math.round(weekDiff);
         }
 
-        // ===== 设置日历显示（真实时间 + 正确节日）=====
+        // ===== 设置日历显示（真实时间 + 自动跨年）=====
         function setupCalendar() {
           function updateCalendar() {
             const now = new Date();
@@ -702,7 +698,7 @@
               { id: 'labor',       month: 4,   day: 1  },
               { id: 'dragonBoat',  month: 4,   day: 31 },
               { id: 'midAutumn',   month: 8,   day: 25 }, // 2026-09-25
-              { id: 'national',    month: 9,   day: 1  } // 2026-10-01
+              { id: 'national',   month: 9,   day: 1  } // 2026-10-01
             ];
 
             holidays.forEach(h => {
@@ -761,7 +757,7 @@
           setInterval(updateCountdown, 1000);
         }
 
-        // ===== 午餐选择器（不可修改）=====
+        // ===== 午餐选择器（使用与薪资相同 UI）=====
         function setupLunchPicker() {
           const resultEl = document.getElementById('foodResult');
           const chooseBtn = document.getElementById('chooseFoodBtn');
