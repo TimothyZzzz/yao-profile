@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yao的个人世界</title>
+    <title>Yao的打工日历</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
         }
         
         body {
@@ -21,7 +22,40 @@
             min-height: 100vh;
             overflow-x: hidden;
         }
-        
+
+        /* === 暗色模式样式 === */
+        body.dark {
+            background-color: #1a1a1a;
+            color: #eee;
+        }
+
+        body.dark .profile-card,
+        body.dark .work-display,
+        body.dark .salary-clicker,
+        body.dark .modal {
+            background: #2d2d2d;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        body.dark .btn-secondary {
+            background: #3c3c3c;
+            color: #ddd;
+            border-color: #555;
+        }
+
+        body.dark .interactive-text {
+            color: #aaa;
+        }
+
+        body.dark .subtitle,
+        body.dark p {
+            color: #ccc;
+        }
+
+        body.dark .heart {
+            color: #ff477e;
+        }
+
         #root {
             min-height: 100vh;
             display: flex;
@@ -80,6 +114,11 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+        }
+
+        .header .subtitle i {
+            animation: bounce 2s infinite;
+            color: #ff6f91;
         }
         
         .main-content {
@@ -233,6 +272,7 @@
             font-size: 1.5rem;
             font-weight: bold;
             margin-bottom: 5px;
+            color: #ff6f91;
         }
         
         .salary-clicker .subtitle {
@@ -247,14 +287,6 @@
             color: #ff6f91;
             margin: 20px 0;
             transition: transform 0.3s;
-        }
-        
-        .salary-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 15px;
         }
         
         .salary-btn {
@@ -281,23 +313,13 @@
             transform: scale(0.95);
         }
         
-        .salary-reset {
-            background: #e0e0e0;
-            color: #333;
+        .reset-btn {
+            background: #6c757d;
+            color: white;
         }
         
-        .salary-reset:hover {
-            background: #d0d0d0;
+        .reset-btn:hover {
             transform: scale(1.05);
-        }
-        
-        .salary-reset:active {
-            transform: scale(0.95);
-        }
-        
-        .click-count {
-            color: #666;
-            font-size: 0.9rem;
         }
         
         .modal-overlay {
@@ -322,17 +344,12 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
         
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
         .modal-header h3 {
             font-size: 1.3rem;
             font-weight: bold;
             color: #222;
+            text-align: center;
+            margin-bottom: 15px;
         }
         
         .modal-close {
@@ -349,10 +366,7 @@
             font-size: 1.1rem;
             margin-bottom: 20px;
             text-align: center;
-        }
-        
-        .modal-content p {
-            margin-bottom: 10px;
+            line-height: 1.6;
         }
         
         .highlight {
@@ -378,7 +392,94 @@
         .toast.show {
             opacity: 1;
         }
-        
+
+        /* ===== 暗色模式按钮（左上角）===== */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;   /* 在左上角 */
+            background: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ff6f91;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.08);
+        }
+
+        .theme-toggle.dark-mode-active {
+            background: #333;
+            color: #ffd1dc;
+        }
+
+        /* ===== 右侧悬浮日历 - 玻璃态效果 ===== */
+        .calendar-sidebar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 280px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px); /* Safari 支持 */
+            border-radius: 16px;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.1),
+                0 0 15px rgba(255, 111, 145, 0.15) inset;
+            padding: 20px;
+            font-size: 0.95rem;
+            z-index: 10;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 111, 145, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .calendar-sidebar:hover {
+            transform: translateY(-2px);
+            box-shadow:
+                0 12px 40px rgba(0, 0, 0, 0.15),
+                0 0 20px rgba(255, 111, 145, 0.2) inset;
+        }
+
+        .calendar-sidebar h3 {
+            margin: 0 0 15px;
+            font-size: 1.1rem;
+            color: #ff6f91;
+        }
+
+        .calendar-body p {
+            margin: 8px 0;
+            line-height: 1.5;
+            color: #222;
+        }
+
+        /* 暗色模式适配 - 日历 */
+        body.dark .calendar-sidebar {
+            background: rgba(45, 45, 45, 0.7);
+            color: #eee;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 15px rgba(255, 111, 145, 0.15) inset;
+            border: 1px solid rgba(255, 111, 145, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        body.dark .calendar-body p {
+            color: #ccc;
+        }
+
         @media (max-width: 768px) {
             .header h1 {
                 font-size: 2rem;
@@ -439,6 +540,11 @@
 </head>
 <body>
     <div id="root">
+        <!-- 暗色模式切换按钮（左上角） -->
+        <button class="theme-toggle" id="themeToggle">
+            <i class="fa-solid fa-moon"></i>
+        </button>
+
         <div class="container">
             <!-- 心形背景 -->
             <div class="heart-background" id="heartBackground"></div>
@@ -448,7 +554,7 @@
                 <h1>Hi，我是Yao</h1>
                 <div class="subtitle">
                     来自 Content·Model BPO & VidaXL 徒步社社长 & 电竞游戏主理人
-                    <i class="fa-solid fa-rocket" style="animation: bounce 2s infinite; color: #ff6f91;"></i>
+                    <i class="fa-solid fa-rocket"></i>
                 </div>
             </div>
             
@@ -464,250 +570,406 @@
                     <div class="random-text" id="randomText"></div>
                 </div>
                 
-                <!-- 工作内容显示 - 放在第一个框下面 -->
+                <!-- 工作内容显示 -->
                 <div class="work-display">
                     <p>
                         我正在做：
                         <span class="dynamic-work" id="dynamicWork"></span>
                     </p>
                 </div>
+
+                <!-- 下班倒计时 -->
+                <div class="work-display">
+                    <p>
+                        ⏳ 离下班还有：
+                        <span class="dynamic-work" id="countdown">正在计算...</span>
+                    </p>
+                </div>
             </div>
             
             <!-- 按钮区域 -->
             <div class="button-container">
-                <button class="btn btn-primary" id="emailBtn">点击获取我的邮件</button>
-                <button class="btn btn-secondary" id="locationBtn">快速找到我</button>
+                <button class="btn btn-primary" id="emailBtn">📧 发送邮件</button>
+                <button class="btn btn-secondary" id="locationBtn">📍 快速找到我</button>
             </div>
             
-            <!-- 薪资点击器 -->
+            <!-- 薪资加薪器 -->
             <div class="salary-clicker">
-                <h2>薪资加薪器</h2>
-                <p class="subtitle">每次点击都会为你的薪资+500</p>
+                <h2>💰 薪资加薪器</h2>
+                <p class="subtitle">每次点击 +500 元</p>
                 <div class="salary-amount" id="salaryAmount">¥0</div>
-                <div class="salary-buttons">
-                    <button class="salary-btn salary-main" id="salaryBtn">点我+500</button>
-                    <button class="salary-btn salary-reset" id="resetBtn">重置</button>
+                <div style="display:flex;gap:10px;justify-content:center;margin-top:15px;">
+                    <button class="salary-btn salary-main" id="salaryBtn">点我 +500</button>
+                    <button class="salary-btn reset-btn" id="resetBtn">🔁 重置数据</button>
                 </div>
-                <div class="click-count" id="clickCount">已点击 0 次</div>
+            </div>
+        </div>
+
+        <!-- ========== 右侧悬浮日历 - 玻璃态效果 =========== -->
+        <div class="calendar-sidebar">
+            <div class="calendar-header">
+                <h3>📅 Yao 的打工日历</h3>
+            </div>
+            <div class="calendar-body">
+                <p><strong>📆 当前时间</strong></p>
+                <p id="dateDisplay">-</p>
+                <p id="lunarDisplay">-</p>
+                <hr style="border:0;border-top:1px solid #eee;margin:10px 0;">
+                <p>💼 距发工资：<span id="salaryCountdown">加载中...</span></p>
+                <p>🎄 距元旦：<span id="countdownnewYear">-</span></p>
+                <p>🐉 距春节：<span id="countdownspring">-</span></p>
+                <p>🌸 距清明：<span id="countdownqingming">-</span></p>
+                <p>🛠️ 距劳动节：<span id="countdownlabor">-</span></p>
+                <p>🥢 距端午节：<span id="countdowndragonBoat">-</span></p>
+                <p>🎑 距中秋节：<span id="countdownmidAutumn">-</span></p>
+                <p>🇨🇳 距国庆节：<span id="countdownnational">-</span></p>
             </div>
         </div>
     </div>
 
+    <!-- Toast 提示 -->
+    <div class="toast" id="toast">操作成功</div>
+
     <script>
-        // 心形背景生成
+        // ===== 初始薪资加载 =====
+        let salary = parseInt(localStorage.getItem('salary')) || 0;
+        let unlockedAchievements = JSON.parse(localStorage.getItem('unlocked_achievements') || '[]');
+
+        // ===== 心形背景 =====
         function createHearts() {
             const heartBackground = document.getElementById('heartBackground');
-            const heartCount = 20;
-            
+            const heartCount = 12;
             for (let i = 0; i < heartCount; i++) {
                 const heart = document.createElement('div');
                 heart.className = 'heart';
                 heart.innerHTML = '❤';
-                
                 const x = Math.random() * 100;
                 const y = Math.random() * 100;
                 const scale = 0.3 + Math.random() * 0.7;
                 const duration = 8 + Math.random() * 12;
                 const delay = Math.random() * 5;
                 const opacity = 0.1 + Math.random() * 0.3;
-                
                 heart.style.left = `${x}%`;
                 heart.style.top = `${y}%`;
                 heart.style.fontSize = `${24 * scale}px`;
                 heart.style.opacity = opacity;
                 heart.style.animation = `float ${duration}s ease-in-out ${delay}s infinite`;
-                
                 heartBackground.appendChild(heart);
             }
         }
-        
-        // 随机语录功能
+
+        // ===== 随机语录系统 =====
         function setupRandomText() {
-            const messages = [
-                "你今天看起来像是刚睡醒，但很有魅力。",
-                "别卷了，喝口水吧兄弟。",
-                "如果人生有撤销键，你现在会按吗？",
-                "今天适合摸鱼（其实每天都适合）。",
-                "加载中……加载失败，请重试你的生活。"
-            ];
-            
-            const randomTextTrigger = document.getElementById('randomTextTrigger');
-            const randomTextElement = document.getElementById('randomText');
-            
-            randomTextTrigger.addEventListener('click', function() {
-                const rand = Math.floor(Math.random() * messages.length);
-                const colors = ["#e74c3c", "#2ecc71", "#3498db", "#f1c40f", "#9b59b6", "#e67e22"];
-                const randomColor = colors[Math.floor(Math.random() * colors.length)];
-                
-                randomTextElement.textContent = messages[rand];
-                randomTextElement.style.color = randomColor;
-            });
+          const trigger = document.getElementById('randomTextTrigger');
+          const output = document.getElementById('randomText');
+          const messages = [
+            "你今天看起来像是刚睡醒，但很有魅力。",
+            "别卷了，喝口水吧兄弟。",
+            "如果人生有撤销键，你现在会按吗？",
+            "今天适合摸鱼（其实每天都适合）。",
+            "加载中……加载失败，请重试你的生活。"
+          ];
+
+          function typeWriter(text, el) {
+            el.textContent = '';
+            let i = 0;
+            const timer = setInterval(() => {
+              if (i < text.length) {
+                el.textContent += text[i];
+                i++;
+              } else {
+                clearInterval(timer);
+              }
+            }, 30);
+          }
+
+          trigger.addEventListener('click', () => {
+            const msg = messages[Math.floor(Math.random() * messages.length)];
+            const colors = ["#e74c3c", "#2ecc71", "#3498db", "#f1c40f", "#9b59b6"];
+            output.style.color = colors[Math.floor(Math.random() * colors.length)];
+            typeWriter(msg, output);
+          });
         }
-        
-        // 动态工作内容
+
+        // ===== 动态工作内容 =====
         function setupDynamicWork() {
-            const workTasks = ["整理模型文件", "审核外包作品", "优化插件工具", "组织徒步活动", "喝咖啡思考人生", "写奇怪的小工具"];
-            const dynamicWorkElement = document.getElementById('dynamicWork');
-            
-            let currentIndex = 0;
-            
-            function updateDynamicWork() {
-                dynamicWorkElement.style.opacity = "0";
-                dynamicWorkElement.style.transform = "translateY(20px)";
-                
-                setTimeout(() => {
-                    dynamicWorkElement.textContent = workTasks[currentIndex];
-                    
-                    const colors = ["#e74c3c", "#2ecc71", "#3498db", "#f1c40f", "#9b59b6", "#e67e22"];
-                    const randomColor = colors[Math.floor(Math.random() * colors.length)];
-                    
-                    dynamicWorkElement.style.opacity = "1";
-                    dynamicWorkElement.style.transform = "translateY(0)";
-                    dynamicWorkElement.style.color = randomColor;
-                    
-                    currentIndex = (currentIndex + 1) % workTasks.length;
-                }, 500);
-            }
-            
-            updateDynamicWork();
-            setInterval(updateDynamicWork, 2500);
+          const tasks = ["整理模型文件", "审核外包作品", "优化插件工具", "组织徒步活动", "喝咖啡思考人生", "写奇怪的小工具"];
+          const el = document.getElementById('dynamicWork');
+          let idx = 0;
+          const update = () => {
+            el.style.opacity = 0;
+            setTimeout(() => {
+              el.textContent = tasks[idx];
+              el.style.color = ["#e74c3c", "#2ecc71", "#3498db", "#f1c40f"][Math.floor(Math.random()*4)];
+              el.style.opacity = 1;
+              idx = (idx + 1) % tasks.length;
+            }, 300);
+          };
+          update();
+          setInterval(update, 2500);
         }
-        
-        // 邮件功能
+
+        // ===== 获取 ISO 周数（国际标准）=====
+        function getISOWeek(date) {
+          const target = new Date(date.valueOf());
+          const dayOfWeek = (target.getDay() + 6) % 7; // 周一为第一天
+          target.setDate(target.getDate() - dayOfWeek + 3);
+          const firstThursday = new Date(target.getFullYear(), 0, 4);
+          const weekDiff = (target - firstThursday) / (7 * 24 * 60 * 60 * 1000);
+          return 1 + Math.round(weekDiff);
+        }
+
+        // ===== 下班倒计时（9:00 - 18:00）=====
+        function setupCountdown() {
+          const countdownEl = document.getElementById('countdown');
+          
+          function updateCountdown() {
+            const now = new Date();
+            const startOfDay = new Date(now);
+            startOfDay.setHours(0, 0, 0, 0);
+
+            const workStart = new Date(startOfDay);
+            workStart.setHours(9, 0, 0, 0); // 9:00 上班
+
+            const workEnd = new Date(startOfDay);
+            workEnd.setHours(18, 0, 0, 0); // 18:00 下班
+
+            if (now < workStart) {
+              const diff = workStart - now;
+              const hours = Math.floor(diff / (1000 * 60 * 60));
+              const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+              countdownEl.textContent = `😴 还没上班，${hours}h ${minutes}m 后开始搬砖`;
+            } 
+            else if (now >= workStart && now < workEnd) {
+              const diff = workEnd - now;
+              const hours = Math.floor(diff / (1000 * 60 * 60));
+              const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+              const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+              countdownEl.textContent = `${hours}h ${minutes}m ${seconds}s`;
+            } 
+            else {
+              countdownEl.textContent = '🎉 可以下班啦！快去徒步吧！';
+            }
+          }
+
+          updateCountdown();
+          setInterval(updateCountdown, 1000);
+        }
+
+        // ===== 设置日历显示（真实时间 + 自动跨年 + 玻璃态）=====
+        function setupCalendar() {
+          function updateCalendar() {
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const year = now.getFullYear();
+            const month = now.getMonth() + 1;
+            const date = now.getDate();
+            const dayOfWeek = ['日', '一', '二', '三', '四', '五', '六'][now.getDay()];
+            const weekNum = getISOWeek(now);
+
+            // 显示公历
+            document.getElementById('dateDisplay').textContent = `${year} 年 ${month} 月 ${date} 日 星期${dayOfWeek}`;
+            document.getElementById('lunarDisplay').textContent = `农历${year}年 · 生肖蛇 · 第${weekNum}周`;
+
+            // 发工资倒计时（每月10号）
+            let payDate = new Date(year, month - 1, 10);
+            if (today > payDate) payDate = new Date(year, month, 10);
+            const salaryDiff = Math.ceil((payDate - today) / (1000 * 60 * 60 * 24));
+            document.getElementById('salaryCountdown').textContent = 
+              salaryDiff === 0 ? '今天发工资！🎉' : `${salaryDiff} 天`;
+
+            // 节日列表（用于构造日期）
+            const holidays = [
+              { id: 'newYear',     date: new Date(0, 0, 1)   },
+              { id: 'spring',      date: new Date(0, 0, 29)  },
+              { id: 'qingming',    date: new Date(0, 3, 5)   },
+              { id: 'labor',       date: new Date(0, 4, 1)   },
+              { id: 'dragonBoat',  date: new Date(0, 4, 31)  },
+              { id: 'midAutumn',   date: new Date(0, 9, 6)   },
+              { id: 'national',    date: new Date(0, 9, 1)   }
+            ];
+
+            // 计算每个节日距离最近一次
+            holidays.forEach(h => {
+              let holidayDate = new Date(year, h.date.getMonth(), h.date.getDate());
+              if (holidayDate < today) {
+                holidayDate = new Date(year + 1, h.date.getMonth(), h.date.getDate());
+              }
+              const diff = Math.ceil((holidayDate - today) / (1000 * 60 * 60 * 24));
+              const elem = document.getElementById(`countdown${h.id}`);
+              if (elem) elem.textContent = `${diff} 天`;
+            });
+          }
+
+          updateCalendar();
+          setInterval(() => {
+            const now = new Date();
+            if (now.getSeconds() === 0 && [0, 30].includes(now.getMinutes())) {
+              updateCalendar(); // 每半小时刷新
+            }
+          }, 60000);
+        }
+
+        // ===== 成就列表 =====
+        const achievements = [
+          { at: 5000, title: '🎓 实习生转正', content: '恭喜你熬过试用期！\n现正式加入“背锅预备队”！' },
+          { at: 10000, title: '🚶‍♂️ 徒步社见习领队', content: '检测到你周末总在户外…\n已自动晋升为徒步社见习干部。' },
+          { at: 15000, title: '💻 假装很忙 Lv.3', content: 'AI 观察到你频繁切屏\n授予【表面勤奋】大师称号。' },
+          { at: 20000, title: '☕ 咖啡因成瘾者', content: '本周第 8 杯咖啡摄入成功！\n建议改名为：BPO 能量永动机。' },
+          { at: 30000, title: '🎮 电竞精神领袖', content: '虽然没赢几把，但气势到位了。\n封号：公司电竞名誉主理人。' },
+          { at: 50000, title: '👑 摸鱼教父', content: '你已达成传说级境界：\n看起来很忙，其实啥也没干。' }
+        ];
+
+        // ===== 显示成就弹窗（必须确认）=====
+        function showAchievement(title, content) {
+          if (document.querySelector('.modal-overlay')) return;
+          const modal = document.createElement('div');
+          modal.className = 'modal-overlay';
+          modal.innerHTML = `
+            <div class="modal">
+              <h3>${title}</h3>
+              <div class="modal-content">${content.replace(/\n/g, '<br>')}</div>
+              <div style="text-align:center;margin-top:20px;">
+                <button class="btn btn-primary" id="confirmAchievement">确认并继续搬砖</button>
+              </div>
+            </div>
+          `;
+          document.body.appendChild(modal);
+          document.getElementById('confirmAchievement').addEventListener('click', () => {
+            document.body.removeChild(modal);
+          });
+          showToast(`🏆 达成新成就：${title}`);
+        }
+
+        // ===== 检查是否解锁成就 =====
+        function checkAndUnlockAchievement(currentSalary) {
+          for (const ach of achievements) {
+            if (currentSalary >= ach.at && !unlockedAchievements.includes(ach.at)) {
+              showAchievement(ach.title, ach.content);
+              unlockedAchievements.push(ach.at);
+              localStorage.setItem('unlocked_achievements', JSON.stringify(unlockedAchievements));
+              break;
+            }
+          }
+        }
+
+        // ===== 薪资系统 =====
+        function setupSalarySystem() {
+          const amountEl = document.getElementById('salaryAmount');
+          const addBtn = document.getElementById('salaryBtn');
+          const resetBtn = document.getElementById('resetBtn');
+
+          function updateDisplay() {
+            amountEl.textContent = new Intl.NumberFormat('zh-CN', {
+              style: 'currency',
+              currency: 'CNY',
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0
+            }).format(salary).replace('CN¥', '¥');
+          }
+
+          addBtn.addEventListener('click', () => {
+            salary += 500;
+            localStorage.setItem('salary', salary);
+            updateDisplay();
+            amountEl.style.transform = 'scale(1.1)';
+            setTimeout(() => amountEl.style.transform = 'scale(1)', 300);
+            checkAndUnlockAchievement(salary);
+          });
+
+          resetBtn.addEventListener('click', () => {
+            if (confirm('⚠️ 确定要重置所有数据吗？\\n\\n- 薪资将变为 ¥0\\n- 所有成就将清空\\n此操作不可撤销')) {
+              salary = 0;
+              localStorage.removeItem('salary');
+              localStorage.removeItem('unlocked_achievements');
+              unlockedAchievements = [];
+              updateDisplay();
+              showToast('🔄 数据已重置，重新开始搬砖吧！');
+            }
+          });
+
+          updateDisplay();
+        }
+
+        // ===== 邮箱 & 位置 =====
         function setupEmail() {
-            const emailBtn = document.getElementById('emailBtn');
-            
-            emailBtn.addEventListener('click', function() {
-                const userEmail = "Ma.Yao@habatrading.com";
-                window.location.href = `mailto:${userEmail}`;
-                showToast('正在打开邮件客户端...');
-            });
+          document.getElementById('emailBtn').addEventListener('click', () => {
+            window.location.href = 'mailto:Ma.Yao@habatrading.com';
+            showToast('📧 正在打开邮件客户端...');
+          });
         }
-        
-        // 位置模态框
+
         function setupLocationModal() {
-            const locationBtn = document.getElementById('locationBtn');
-            
-            locationBtn.addEventListener('click', function() {
-                const modalOverlay = document.createElement('div');
-                modalOverlay.className = 'modal-overlay';
-                modalOverlay.innerHTML = `
-                    <div class="modal">
-                        <div class="modal-header">
-                            <h3>我的位置</h3>
-                            <div class="modal-close" id="modalClose">
-                                <i class="fa-solid fa-times"></i>
-                            </div>
-                        </div>
-                        <div class="modal-content">
-                            <p>2楼</p>
-                            <p class="highlight">BPO办公室（原Turkey会议室）</p>
-                        </div>
-                        <div style="display: flex; justify-content: center;">
-                            <button class="btn btn-primary" id="modalOk" style="padding: 8px 24px;">知道了</button>
-                        </div>
-                    </div>
-                `;
-                
-                document.body.appendChild(modalOverlay);
-                
-                const closeModal = function() {
-                    document.body.removeChild(modalOverlay);
-                };
-                
-                document.getElementById('modalClose').addEventListener('click', closeModal);
-                document.getElementById('modalOk').addEventListener('click', closeModal);
-                modalOverlay.addEventListener('click', function(e) {
-                    if (e.target === modalOverlay) {
-                        closeModal();
-                    }
-                });
-            });
+          document.getElementById('locationBtn').addEventListener('click', () => {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+              <div class="modal">
+                <div class="modal-header">
+                  <h3>我的位置</h3>
+                  <div class="modal-close"><i class="fa-solid fa-times"></i></div>
+                </div>
+                <div class="modal-content">
+                  <p>📍 2楼</p>
+                  <p class="highlight">BPO办公室（原Turkey会议室）</p>
+                </div>
+                <div style="text-align:center;">
+                  <button class="btn btn-primary" id="modalOk">知道了</button>
+                </div>
+              </div>
+            `;
+            document.body.appendChild(modal);
+            const close = () => document.body.removeChild(modal);
+            modal.querySelector('.modal-close').addEventListener('click', close);
+            modal.querySelector('#modalOk').addEventListener('click', close);
+          });
         }
-        
-        // 薪资点击器功能
-        function setupSalaryClicker() {
-            let salary = parseInt(localStorage.getItem('salary')) || 0;
-            let clicks = parseInt(localStorage.getItem('clicks')) || 0;
-            
-            const salaryAmount = document.getElementById('salaryAmount');
-            const salaryBtn = document.getElementById('salaryBtn');
-            const resetBtn = document.getElementById('resetBtn');
-            const clickCount = document.getElementById('clickCount');
-            
-            function updateSalaryDisplay() {
-                const formattedSalary = new Intl.NumberFormat('zh-CN', {
-                    style: 'currency',
-                    currency: 'CNY',
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                }).format(salary).replace('CN¥', '¥');
-                
-                salaryAmount.textContent = formattedSalary;
-                clickCount.textContent = `已点击 ${clicks} 次`;
-                
-                // 添加点击动画
-                if (salary > 0) {
-                    salaryAmount.style.transform = 'scale(1.1)';
-                    setTimeout(() => {
-                        salaryAmount.style.transform = 'scale(1)';
-                    }, 300);
-                }
+
+        // ===== 暗色模式 =====
+        function setupThemeToggle() {
+          const toggle = document.getElementById('themeToggle');
+          const icon = toggle.querySelector('i');
+          const isDark = localStorage.getItem('theme') === 'dark';
+
+          if (isDark) {
+            document.body.classList.add('dark');
+            icon.className = 'fa-solid fa-sun';
+            toggle.classList.add('dark-mode-active');
+          }
+
+          toggle.addEventListener('click', () => {
+            const isNowDark = document.body.classList.toggle('dark');
+            if (isNowDark) {
+              icon.className = 'fa-solid fa-sun';
+              toggle.classList.add('dark-mode-active');
+              localStorage.setItem('theme', 'dark');
+            } else {
+              icon.className = 'fa-solid fa-moon';
+              toggle.classList.remove('dark-mode-active');
+              localStorage.setItem('theme', 'light');
             }
-            
-            function increaseSalary() {
-                salary += 500;
-                clicks += 1;
-                localStorage.setItem('salary', salary.toString());
-                localStorage.setItem('clicks', clicks.toString());
-                updateSalaryDisplay();
-            }
-            
-            function resetGame() {
-                if (confirm('确定要重置薪资和点击次数吗？')) {
-                    salary = 0;
-                    clicks = 0;
-                    localStorage.setItem('salary', salary.toString());
-                    localStorage.setItem('clicks', clicks.toString());
-                    updateSalaryDisplay();
-                }
-            }
-            
-            salaryBtn.addEventListener('click', increaseSalary);
-            resetBtn.addEventListener('click', resetGame);
-            
-            // 初始化显示
-            updateSalaryDisplay();
+          });
         }
-        
-        // Toast提示功能
+
+        // ===== Toast 提示 =====
         function showToast(message) {
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.textContent = message;
-            
-            document.body.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.classList.add('show');
-            }, 10);
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => {
-                    document.body.removeChild(toast);
-                }, 300);
-            }, 3000);
+          const toast = document.getElementById('toast');
+          toast.textContent = message;
+          toast.classList.add('show');
+          setTimeout(() => toast.classList.remove('show'), 3000);
         }
-        
-        // 初始化所有功能
-        document.addEventListener('DOMContentLoaded', function() {
-            createHearts();
-            setupRandomText();
-            setupDynamicWork();
-            setupEmail();
-            setupLocationModal();
-            setupSalaryClicker();
+
+        // ===== 初始化 =====
+        document.addEventListener('DOMContentLoaded', () => {
+          createHearts();
+          setupRandomText();
+          setupDynamicWork();
+          setupCountdown();
+          setupCalendar();
+          setupEmail();
+          setupLocationModal();
+          setupSalarySystem();
+          setupThemeToggle();
         });
     </script>
 </body>
