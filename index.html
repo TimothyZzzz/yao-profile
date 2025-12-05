@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yao的打工日历</title>
+    <title>Yao的个人简介</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <style>
         * {
@@ -397,7 +397,7 @@
         .theme-toggle {
             position: fixed;
             top: 20px;
-            left: 20px;   /* 在左上角 */
+            left: 20px;
             background: #fff;
             border: none;
             border-radius: 50%;
@@ -431,7 +431,7 @@
             width: 280px;
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px); /* Safari 支持 */
+            -webkit-backdrop-filter: blur(10px);
             border-radius: 16px;
             box-shadow: 
                 0 8px 32px rgba(0, 0, 0, 0.1),
@@ -464,7 +464,7 @@
             color: #222;
         }
 
-        /* 暗色模式适配 - 日历 */
+        /* 暗色模式适配 */
         body.dark .calendar-sidebar {
             background: rgba(45, 45, 45, 0.7);
             color: #eee;
@@ -605,7 +605,7 @@
             </div>
         </div>
 
-        <!-- ========== 右侧悬浮日历 - 玻璃态效果 =========== -->
+        <!-- ========== 右侧悬浮日历（玻璃态 + 真实时间）========== -->
         <div class="calendar-sidebar">
             <div class="calendar-header">
                 <h3>📅 Yao 的打工日历</h3>
@@ -756,48 +756,54 @@
           setInterval(updateCountdown, 1000);
         }
 
-        // ===== 设置日历显示（真实时间 + 自动跨年 + 玻璃态）=====
+        // ===== 设置日历显示（真实时间 + 正确节日）=====
         function setupCalendar() {
           function updateCalendar() {
             const now = new Date();
-            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            const year = now.getFullYear();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // 仅保留年月日
+            const currentYear = now.getFullYear();
             const month = now.getMonth() + 1;
             const date = now.getDate();
             const dayOfWeek = ['日', '一', '二', '三', '四', '五', '六'][now.getDay()];
             const weekNum = getISOWeek(now);
 
             // 显示公历
-            document.getElementById('dateDisplay').textContent = `${year} 年 ${month} 月 ${date} 日 星期${dayOfWeek}`;
-            document.getElementById('lunarDisplay').textContent = `农历${year}年 · 生肖蛇 · 第${weekNum}周`;
+            document.getElementById('dateDisplay').textContent = 
+              `${currentYear} 年 ${month} 月 ${date} 日 星期${dayOfWeek}`;
+            document.getElementById('lunarDisplay').textContent = 
+              `农历${currentYear}年 · 生肖蛇 · 第${weekNum}周`;
 
             // 发工资倒计时（每月10号）
-            let payDate = new Date(year, month - 1, 10);
-            if (today > payDate) payDate = new Date(year, month, 10);
+            let payDate = new Date(currentYear, month - 1, 10);
+            if (today > payDate) {
+              payDate = new Date(currentYear, month, 10);
+            }
             const salaryDiff = Math.ceil((payDate - today) / (1000 * 60 * 60 * 24));
             document.getElementById('salaryCountdown').textContent = 
               salaryDiff === 0 ? '今天发工资！🎉' : `${salaryDiff} 天`;
 
-            // 节日列表（用于构造日期）
+            // 节日列表（使用当前年份构造）
             const holidays = [
-              { id: 'newYear',     date: new Date(0, 0, 1)   },
-              { id: 'spring',      date: new Date(0, 0, 29)  },
-              { id: 'qingming',    date: new Date(0, 3, 5)   },
-              { id: 'labor',       date: new Date(0, 4, 1)   },
-              { id: 'dragonBoat',  date: new Date(0, 4, 31)  },
-              { id: 'midAutumn',   date: new Date(0, 9, 6)   },
-              { id: 'national',    date: new Date(0, 9, 1)   }
+              { id: 'newYear',     month: 0,   day: 1  },   // 1月1日
+              { id: 'spring',      month: 0,   day: 29 },   // 1月29日
+              { id: 'qingming',    month: 3,   day: 5  },   // 4月5日
+              { id: 'labor',       month: 4,   day: 1  },   // 5月1日
+              { id: 'dragonBoat',  month: 4,   day: 31 },  // 5月31日
+              { id: 'midAutumn',   month: 9,   day: 6  },  // 10月6日 ✅
+              { id: 'national',    month: 9,   day: 1  }   // 10月1日 ✅
             ];
 
             // 计算每个节日距离最近一次
             holidays.forEach(h => {
-              let holidayDate = new Date(year, h.date.getMonth(), h.date.getDate());
+              let holidayDate = new Date(currentYear, h.month, h.day);
               if (holidayDate < today) {
-                holidayDate = new Date(year + 1, h.date.getMonth(), h.date.getDate());
+                holidayDate = new Date(currentYear + 1, h.month, h.day);
               }
               const diff = Math.ceil((holidayDate - today) / (1000 * 60 * 60 * 24));
               const elem = document.getElementById(`countdown${h.id}`);
-              if (elem) elem.textContent = `${diff} 天`;
+              if (elem) {
+                elem.textContent = `${diff} 天`;
+              }
             });
           }
 
@@ -805,7 +811,7 @@
           setInterval(() => {
             const now = new Date();
             if (now.getSeconds() === 0 && [0, 30].includes(now.getMinutes())) {
-              updateCalendar(); // 每半小时刷新
+              updateCalendar(); // 每半小时刷新一次
             }
           }, 60000);
         }
@@ -820,7 +826,7 @@
           { at: 50000, title: '👑 摸鱼教父', content: '你已达成传说级境界：\n看起来很忙，其实啥也没干。' }
         ];
 
-        // ===== 显示成就弹窗（必须确认）=====
+        // ===== 显示成就弹窗 =====
         function showAchievement(title, content) {
           if (document.querySelector('.modal-overlay')) return;
           const modal = document.createElement('div');
