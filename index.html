@@ -344,17 +344,12 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
         
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
         .modal-header h3 {
             font-size: 1.3rem;
             font-weight: bold;
             color: #222;
+            text-align: center;
+            margin-bottom: 15px;
         }
         
         .modal-close {
@@ -482,7 +477,7 @@
 </head>
 <body>
     <div id="root">
-        <!-- 暗色模式切换按钮（左上角） -->
+        <!-- 暗色模式切换按钮 -->
         <button class="theme-toggle" id="themeToggle">
             <i class="fa-solid fa-moon"></i>
         </button>
@@ -519,6 +514,14 @@
                         <span class="dynamic-work" id="dynamicWork"></span>
                     </p>
                 </div>
+
+                <!-- ===== 新增：离下班时间倒计时 ===== -->
+                <div class="work-display">
+                    <p>
+                        ⏳ 离下班还有：
+                        <span class="dynamic-work" id="countdown">正在计算...</span>
+                    </p>
+                </div>
             </div>
             
             <!-- 按钮区域 -->
@@ -539,7 +542,7 @@
             </div>
         </div>
 
-        <!-- ========== 右侧悬浮日历（玻璃态 + 真实时间）========== -->
+        <!-- ========== 右侧悬浮日历（玻璃态）========== -->
         <div class="calendar-sidebar">
             <div class="calendar-header">
                 <h3>📅 Yao 的打工日历</h3>
@@ -648,12 +651,12 @@
           const target = new Date(date.valueOf());
           const dayOfWeek = (target.getDay() + 6) % 7; // 周一为第一天
           target.setDate(target.getDate() - dayOfWeek + 3); // 移动到本周四
-          const firstThursday = new Date(target.getFullYear(), 0, 4); // 年初第一个周四
+          const firstThursday = new Date(target.getFullYear(), 0, 4);
           const weekDiff = (target - firstThursday) / (7 * 24 * 60 * 60 * 1000);
-          return Math.round(weekDiff) + 1;
+          return 1 + Math.round(weekDiff);
         }
 
-        // ===== 设置日历显示（真实时间 + 正确周数）=====
+        // ===== 设置日历显示（真实时间 + 正确节日）=====
         function setupCalendar() {
           function updateCalendar() {
             const now = new Date();
@@ -664,7 +667,7 @@
             const dayOfWeek = ['日', '一', '二', '三', '四', '五', '六'][now.getDay()];
             const isoWeek = getISOWeek(now);
 
-            // 显示公历与周数
+            // 显示公历
             document.getElementById('dateDisplay').textContent = 
               `${year} 年 ${month} 月 ${date} 日 星期${dayOfWeek}`;
             document.getElementById('lunarDisplay').textContent = 
@@ -677,18 +680,17 @@
             document.getElementById('salaryCountdown').textContent = 
               salaryDiff === 0 ? '今天发工资！🎉' : `${salaryDiff} 天`;
 
-            // ===== 2026 年节日列表（真实日期）=====
+            // 2026 年节日列表
             const holidays = [
-              { id: 'newYear',     month: 0,   day: 1  },   // 2026-01-01
-              { id: 'spring',      month: 0,   day: 29 },   // 2026-01-29
-              { id: 'qingming',    month: 3,   day: 5  },   // 2026-04-05
-              { id: 'labor',       month: 4,   day: 1  },   // 2026-05-01
-              { id: 'dragonBoat',  month: 4,   day: 31 },  // 2026-05-31
-              { id: 'midAutumn',   month: 8,   day: 25 },  // ✅ 2026-09-25
-              { id: 'national',    month: 9,   day: 1  }   // 2026-10-01
+              { id: 'newYear',     month: 0,   day: 1  },
+              { id: 'spring',      month: 0,   day: 29 },
+              { id: 'qingming',    month: 3,   day: 5  },
+              { id: 'labor',       month: 4,   day: 1  },
+              { id: 'dragonBoat',  month: 4,   day: 31 },
+              { id: 'midAutumn',   month: 8,   day: 25 }, // 2026-09-25
+              { id: 'national',    month: 9,   day: 1  }
             ];
 
-            // 计算每个节日距离
             holidays.forEach(h => {
               const holidayDate = new Date(2026, h.month, h.day);
               const diff = Math.floor((holidayDate - today) / (1000 * 60 * 60 * 24));
@@ -706,6 +708,43 @@
               updateCalendar(); // 每半小时刷新一次
             }
           }, 60000);
+        }
+
+        // ===== 下班倒计时（9:00 - 18:00）=====
+        function setupCountdown() {
+          const countdownEl = document.getElementById('countdown');
+          
+          function updateCountdown() {
+            const now = new Date();
+            const startOfDay = new Date(now);
+            startOfDay.setHours(0, 0, 0, 0);
+
+            const workStart = new Date(startOfDay);
+            workStart.setHours(9, 0, 0, 0); // 9:00 上班
+
+            const workEnd = new Date(startOfDay);
+            workEnd.setHours(18, 0, 0, 0); // 18:00 下班
+
+            if (now < workStart) {
+              const diff = workStart - now;
+              const hours = Math.floor(diff / (1000 * 60 * 60));
+              const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+              countdownEl.textContent = `😴 还没上班，${hours}h ${minutes}m 后开始搬砖`;
+            } 
+            else if (now >= workStart && now < workEnd) {
+              const diff = workEnd - now;
+              const hours = Math.floor(diff / (1000 * 60 * 60));
+              const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+              const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+              countdownEl.textContent = `${hours}h ${minutes}m ${seconds}s`;
+            } 
+            else {
+              countdownEl.textContent = '🎉 可以下班啦！快去徒步吧！';
+            }
+          }
+
+          updateCountdown();
+          setInterval(updateCountdown, 1000);
         }
 
         // ===== 成就列表 =====
@@ -843,7 +882,7 @@
               icon.className = 'fa-solid fa-sun';
               toggle.classList.add('dark-mode-active');
               localStorage.setItem('theme', 'dark');
-            }  else {
+            } else {
               icon.className = 'fa-solid fa-moon';
               toggle.classList.remove('dark-mode-active');
               localStorage.setItem('theme', 'light');
@@ -864,10 +903,11 @@
           createHearts();
           setupRandomText();
           setupDynamicWork();
+          setupCountdown();         // ✅ 恢复：离下班时间
+          setupCalendar();          // 日历
           setupEmail();
           setupLocationModal();
           setupSalarySystem();
-          setupCalendar();
           setupThemeToggle();
         });
     </script>
