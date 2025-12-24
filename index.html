@@ -344,12 +344,18 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
         
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
         .modal-header h3 {
             font-size: 1.3rem;
             font-weight: bold;
             color: #222;
             text-align: center;
-            margin-bottom: 15px;
         }
         
         .modal-close {
@@ -490,7 +496,7 @@
             <div class="header">
                 <h1>Hi，我是Yao</h1>
                 <div class="subtitle">
-                    来自 Content·Model BPO & VidaXL 徒步社社长 & 电竞游戏主理人
+                    来自 Product Sourcing-商务组 & VidaXL 徒步社社长 & 电竞游戏主理人
                     <i class="fa-solid fa-rocket"></i>
                 </div>
             </div>
@@ -541,7 +547,7 @@
                 </div>
             </div>
 
-            <!-- ===== 中午吃什么（UI 统一）===== -->
+            <!-- 中午吃什么 -->
             <div class="salary-clicker" id="lunchPicker">
                 <h2>🍚 今天中午吃什么</h2>
                 <p class="subtitle">拯救选择困难症</p>
@@ -605,16 +611,25 @@
             }
         }
 
-        // ===== 随机语录系统 =====
+        // ===== 随机语录系统（新增5条）=====
         function setupRandomText() {
           const trigger = document.getElementById('randomTextTrigger');
           const output = document.getElementById('randomText');
+
           const messages = [
+            // 原有句子
             "你今天看起来像是刚睡醒，但很有魅力。",
             "别卷了，喝口水吧兄弟。",
             "如果人生有撤销键，你现在会按吗？",
             "今天适合摸鱼（其实每天都适合）。",
-            "加载中……加载失败，请重试你的生活。"
+            "加载中……加载失败，请重试你的生活。",
+
+            // 新增金句 ✅
+            "今天没人找你？恭喜你，已被系统标记为‘可替代性强’。",
+            "你不是在摸鱼，你是在练习潜水技巧。",
+            "周报写得好，放假跑不了。",
+            "别问，问就是需求有变。",
+            "建议把‘在忙’改成‘在思考人生方向’。"
           ];
 
           function typeWriter(text, el) {
@@ -624,7 +639,7 @@
               if (i < text.length) {
                 el.textContent += text[i];
                 i++;
-              }  else {
+              } else {
                 clearInterval(timer);
               }
             }, 30);
@@ -698,7 +713,7 @@
               { id: 'labor',       month: 4,   day: 1  },
               { id: 'dragonBoat',  month: 4,   day: 31 },
               { id: 'midAutumn',   month: 8,   day: 25 }, // 2026-09-25
-              { id: 'national',   month: 9,   day: 1  } // 2026-10-01
+              { id: 'national',    month: 9,   day: 1  } // 2026-10-01
             ];
 
             holidays.forEach(h => {
@@ -715,12 +730,12 @@
           setInterval(() => {
             const now = new Date();
             if (now.getSeconds() === 0 && [0, 30].includes(now.getMinutes())) {
-              updateCalendar(); // 每半小时刷新一次
+              updateCalendar(); // 毛半小时刷新一次
             }
           }, 60000);
         }
 
-        // ===== 下班倒计时（9:00 - 18:00）=====
+        // ===== 下班倒计时（8:00 - 17:30）=====
         function setupCountdown() {
           const countdownEl = document.getElementById('countdown');
           
@@ -730,10 +745,10 @@
             startOfDay.setHours(0, 0, 0, 0);
 
             const workStart = new Date(startOfDay);
-            workStart.setHours(9, 0, 0, 0); // 9:00 上班
+            workStart.setHours(8, 0, 0, 0); // 8:00 上班
 
             const workEnd = new Date(startOfDay);
-            workEnd.setHours(18, 0, 0, 0); // 18:00 下班
+            workEnd.setHours(17, 30, 0, 0); // 17:30 下班
 
             if (now < workStart) {
               const diff = workStart - now;
@@ -757,7 +772,7 @@
           setInterval(updateCountdown, 1000);
         }
 
-        // ===== 午餐选择器（使用与薪资相同 UI）=====
+        // ===== 午餐选择器（固定菜单）=====
         function setupLunchPicker() {
           const resultEl = document.getElementById('foodResult');
           const chooseBtn = document.getElementById('chooseFoodBtn');
@@ -909,8 +924,8 @@
                   <div class="modal-close"><i class="fa-solid fa-times"></i></div>
                 </div>
                 <div class="modal-content">
-                  <p>📍 2楼</p>
-                  <p class="highlight">BPO办公室（原Turkey会议室）</p>
+                  <p>📍 3楼</p>
+                  <p class="highlight">进入打卡机 左转最里面</p>
                 </div>
                 <div style="text-align:center;">
                   <button class="btn btn-primary" id="modalOk">知道了</button>
