@@ -576,6 +576,8 @@
                 <p>🥢 距端午节：<span id="countdowndragonBoat">-</span></p>
                 <p>🎑 距中秋节：<span id="countdownmidAutumn">-</span></p>
                 <p>🇨🇳 距国庆节：<span id="countdownnational">-</span></p>
+                <hr style="border:0;border-top:1px solid #eee;margin:10px 0;">
+                <p>📈 距股指交割：<span id="countdownIndex">-</span></p>
             </div>
         </div>
     </div>
@@ -738,6 +740,48 @@
                 elem.textContent = `${diff} 天`;
               }
             });
+
+            // ===== 股指交割日（2026年正确日期）=====
+            const indexHolidays = [
+              { id: 'index1',  name: '1月',  month: 0,  day: 16  },
+              { id: 'index2',  name: '2月',  month: 1,  day: 20  },
+              { id: 'index3',  name: '3月',  month: 2,  day: 20  },
+              { id: 'index4',  name: '4月',  month: 3,  day: 17  },
+              { id: 'index5',  name: '5月',  month: 4,  day: 15  },
+              { id: 'index6',  name: '6月',  month: 5,  day: 19  },
+              { id: 'index7',  name: '7月',  month: 6,  day: 17  },
+              { id: 'index8',  name: '8月',  month: 7,  day: 21  },
+              { id: 'index9',  name: '9月',  month: 8,  day: 18  },
+              { id: 'index10', name: '10月', month: 9,  day: 16  },
+              { id: 'index11', name: '11月', month: 10, day: 20  },
+              { id: 'index12', name: '12月', month: 11, day: 18  }
+            ];
+
+            // 计算最近的股指交割日
+            let nearestIndexDate = null;
+            let nearestIndexDiff = Infinity;
+            
+            indexHolidays.forEach(h => {
+              // 构造今年的交割日
+              let holidayDate = new Date(currentYear, h.month, h.day);
+              
+              // 如果已经过了，则用明年
+              if (today > holidayDate) {
+                holidayDate = new Date(nextYear, h.month, h.day);
+              }
+
+              const diff = Math.floor((holidayDate - today) / (1000 * 60 * 60 * 24));
+              if (diff >= 0 && diff < nearestIndexDiff) {
+                nearestIndexDiff = diff;
+                nearestIndexDate = holidayDate;
+              }
+            });
+
+            // 更新股指交割倒计时
+            const indexElem = document.getElementById('countdownIndex');
+            if (indexElem && nearestIndexDate) {
+              indexElem.textContent = `${nearestIndexDiff} 天`;
+            }
           }
 
           updateCalendar();
