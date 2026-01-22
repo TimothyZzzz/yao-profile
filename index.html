@@ -709,15 +709,15 @@
             document.getElementById('salaryCountdown').textContent = 
               salaryDiff === 0 ? '今天发工资！🎉' : `${salaryDiff} 天`;
 
-            // ===== 节日列表（支持跨年）=====
+            // ===== 节日列表（2026年准确日期）=====
             const holidays = [
               { id: 'newYear',     name: '元旦',        month: 0,   day: 1   },
-              { id: 'spring',      name: '春节',        month: 1,   day: 8   }, // 2027年春节：2月8日
-              { id: 'qingming',    name: '清明节',      month: 3,   day: 4   }, // 通常在4月4或5日
-              { id: 'labor',       name: '劳动节',      month: 4,   day: 1   },
-              { id: 'dragonBoat',  name: '端午节',      month: 5,   day: 30  }, // 2027年6月30日
-              { id: 'midAutumn',   name: '中秋节',      month: 9,   day: 6   }, // 2027年10月6日
-              { id: 'national',    name: '国庆节',      month: 9,   day: 1   }
+              { id: 'spring',      name: '春节',        month: 1,   day: 15   }, // 2026年春节：2月15日
+              { id: 'qingming',    name: '清明节',      month: 3,   day: 4   }, // 2026年清明节：4月4日
+              { id: 'labor',       name: '劳动节',      month: 4,   day: 1   }, // 2026年劳动节：5月1日
+              { id: 'dragonBoat',  name: '端午节',      month: 5,   day: 19  }, // 2026年端午节：6月19日
+              { id: 'midAutumn',   name: '中秋节',      month: 8,   day: 25   }, // 2026年中秋节：9月25日
+              { id: 'national',    name: '国庆节',      month: 9,   day: 1   }  // 2026年国庆节：10月1日
             ];
 
             const currentYear = year;
