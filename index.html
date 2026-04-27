@@ -23,6 +23,33 @@
             overflow-x: hidden;
         }
 
+        /* === 视频背景样式 === */
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .video-background video {
+            min-width: 100%;
+            min-height: 100%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            opacity: 0.6;
+        }
+
+        body.dark .video-background video {
+            opacity: 0.4;
+        }
+
         /* === 暗色模式样式 === */
         body.dark {
             background-color: #1a1a1a;
@@ -489,6 +516,13 @@
     </style>
 </head>
 <body>
+    <!-- 视频背景 -->
+    <div class="video-background">
+        <video autoplay muted loop playsinline>
+            <source src="风吹花草落瓣云动画.mp4" type="video/mp4">
+        </video>
+    </div>
+
     <div id="root">
         <!-- 暗色模式切换按钮 -->
         <button class="theme-toggle" id="themeToggle">
@@ -501,7 +535,7 @@
             
             <!-- 标题区域 -->
             <div class="header">
-                <h1>Hi，我是Yao</h1>
+                <h1>Hi，我是 Yao</h1>
                 <div class="subtitle">
                     来自 Product Sourcing-商务组 & VidaXL 徒步社社长 & 电竞游戏主理人
                     <i class="fa-solid fa-rocket"></i>
@@ -620,7 +654,7 @@
             }
         }
 
-        // ===== 随机语录系统（新增5条）=====
+        // ===== 随机语录系统（新增 5 条）=====
         function setupRandomText() {
           const trigger = document.getElementById('randomTextTrigger');
           const output = document.getElementById('randomText');
@@ -636,7 +670,7 @@
             "你不是在摸鱼，你是在练习潜水技巧。",
             "周报写得好，放假跑不了。",
             "别问，问就是需求有变。",
-            "建议把‘在忙’改成‘在思考人生方向’。"
+            "建议把'在忙'改成'在思考人生方向'。"
           ];
 
           function typeWriter(text, el) {
@@ -711,22 +745,22 @@
             document.getElementById('lunarDisplay').textContent = 
               `农历${year}年 · 生肖${getZodiac(year)} · 第${isoWeek}周`;
 
-            // 发工资倒计时（每月10号）
+            // 发工资倒计时（每月 10 号）
             let payDate = new Date(year, month - 1, 10);
             if (today > payDate) payDate = new Date(year, month, 10);
             const salaryDiff = Math.floor((payDate - today) / (1000 * 60 * 60 * 24));
             document.getElementById('salaryCountdown').textContent = 
               salaryDiff === 0 ? '今天发工资！🎉' : `${salaryDiff} 天`;
 
-            // ===== 节日列表（2026年准确日期）=====
+            // ===== 节日列表（2026 年准确日期）=====
             const holidays = [
               { id: 'newYear',     name: '元旦',        month: 0,   day: 1   },
-              { id: 'spring',      name: '春节',        month: 1,   day: 15   }, // 2026年春节：2月15日
-              { id: 'qingming',    name: '清明节',      month: 3,   day: 4   }, // 2026年清明节：4月4日
-              { id: 'labor',       name: '劳动节',      month: 4,   day: 1   }, // 2026年劳动节：5月1日
-              { id: 'dragonBoat',  name: '端午节',      month: 5,   day: 19  }, // 2026年端午节：6月19日
-              { id: 'midAutumn',   name: '中秋节',      month: 8,   day: 25   }, // 2026年中秋节：9月25日
-              { id: 'national',    name: '国庆节',      month: 9,   day: 1   }  // 2026年国庆节：10月1日
+              { id: 'spring',      name: '春节',        month: 1,   day: 15   }, // 2026 年春节：2 月 15 日
+              { id: 'qingming',    name: '清明节',      month: 3,   day: 4   }, // 2026 年清明节：4 月 4 日
+              { id: 'labor',       name: '劳动节',      month: 4,   day: 1   }, // 2026 年劳动节：5 月 1 日
+              { id: 'dragonBoat',  name: '端午节',      month: 5,   day: 19  }, // 2026 年端午节：6 月 19 日
+              { id: 'midAutumn',   name: '中秋节',      month: 8,   day: 25   }, // 2026 年中秋节：9 月 25 日
+              { id: 'national',    name: '国庆节',      month: 9,   day: 1   }  // 2026 年国庆节：10 月 1 日
             ];
 
             const currentYear = year;
@@ -748,20 +782,20 @@
               }
             });
 
-            // ===== 股指交割日（2026年正确日期）=====
+            // ===== 股指交割日（2026 年正确日期）=====
             const indexHolidays = [
-              { id: 'index1',  name: '1月',  month: 0,  day: 16  },
-              { id: 'index2',  name: '2月',  month: 1,  day: 20  },
-              { id: 'index3',  name: '3月',  month: 2,  day: 20  },
-              { id: 'index4',  name: '4月',  month: 3,  day: 17  },
-              { id: 'index5',  name: '5月',  month: 4,  day: 15  },
-              { id: 'index6',  name: '6月',  month: 5,  day: 19  },
-              { id: 'index7',  name: '7月',  month: 6,  day: 17  },
-              { id: 'index8',  name: '8月',  month: 7,  day: 21  },
-              { id: 'index9',  name: '9月',  month: 8,  day: 18  },
-              { id: 'index10', name: '10月', month: 9,  day: 16  },
-              { id: 'index11', name: '11月', month: 10, day: 20  },
-              { id: 'index12', name: '12月', month: 11, day: 18  }
+              { id: 'index1',  name: '1 月',  month: 0,  day: 16  },
+              { id: 'index2',  name: '2 月',  month: 1,  day: 20  },
+              { id: 'index3',  name: '3 月',  month: 2,  day: 20  },
+              { id: 'index4',  name: '4 月',  month: 3,  day: 17  },
+              { id: 'index5',  name: '5 月',  month: 4,  day: 15  },
+              { id: 'index6',  name: '6 月',  month: 5,  day: 19  },
+              { id: 'index7',  name: '7 月',  month: 6,  day: 17  },
+              { id: 'index8',  name: '8 月',  month: 7,  day: 21  },
+              { id: 'index9',  name: '9 月',  month: 8,  day: 18  },
+              { id: 'index10', name: '10 月', month: 9,  day: 16  },
+              { id: 'index11', name: '11 月', month: 10, day: 20  },
+              { id: 'index12', name: '12 月', month: 11, day: 18  }
             ];
 
             // 计算最近的股指交割日
@@ -849,12 +883,12 @@
             '番茄牛腩饭', '黄焖鸡米饭', '猪脚饭', '卤肉饭', '咖喱鸡块',
             '沙县小吃', '兰州拉面', '杨国福麻辣烫', '张亮麻辣烫', '老乡鸡',
             '麦当劳', '肯德基', '汉堡王', '必胜客', '真功夫',
-            '711便当', '全家关东煮', '自热小火锅', '速食螺蛳粉',
+            '711 便当', '全家关东煮', '自热小火锅', '速食螺蛳粉',
             '西红柿炒鸡蛋', '清炒时蔬', '蒜蓉空心菜', '凉拌黄瓜', '蒸蛋羹',
             '土豆炖牛肉', '冬瓜排骨汤', '红烧带鱼', '清蒸鲈鱼', '油焖大虾',
             '白灼菜心', '葱烧豆腐', '家常豆腐', '地三鲜', '京酱肉丝',
             '老板请客（幻觉版）', '空气套餐', '继续搬砖吧',
-            '喝口水续命', '泡面+蛋+火腿肠豪华版', '昨天剩的打包菜',
+            '喝口水续命', '泡面 + 蛋 + 火腿肠豪华版', '昨天剩的打包菜',
             '微波炉加热一下', '同事吃啥我吃啥', '还没想好'
           ];
 
@@ -889,7 +923,7 @@
 
         // ===== 成就列表 =====
         const achievements = [
-          { at: 5000, title: '🎓 实习生转正', content: '恭喜你熬过试用期！\n现正式加入“背锅预备队”！' },
+          { at: 5000, title: '🎓 实习生转正', content: '恭喜你熬过试用期！\n现正式加入"背锅预备队"！' },
           { at: 10000, title: '🚶‍♂️ 徒步社见习领队', content: '检测到你周末总在户外…\n已自动晋升为徒步社见习干部。' },
           { at: 15000, title: '💻 假装很忙 Lv.3', content: 'AI 观察到你频繁切屏\n授予【表面勤奋】大师称号。' },
           { at: 20000, title: '☕ 咖啡因成瘾者', content: '本周第 8 杯咖啡摄入成功！\n建议改名为：BPO 能量永动机。' },
@@ -989,7 +1023,7 @@
                   <div class="modal-close"><i class="fa-solid fa-times"></i></div>
                 </div>
                 <div class="modal-content">
-                  <p>📍 3楼</p>
+                  <p>📍 3 楼</p>
                   <p class="highlight">进入打卡机 左转最里面</p>
                 </div>
                 <div style="text-align:center;">
