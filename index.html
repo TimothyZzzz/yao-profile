@@ -4,83 +4,158 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yao 的终极打工人宇宙</title>
+    <meta name="description" content="Yao 的个人主页：打工状态、薪资加薪器、午餐选择与节日倒计时。">
+    <meta name="theme-color" content="#fff6f8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <style>
+
+        :root {
+            --rose-800: #8f3656;
+            --rose-700: #b14a6d;
+            --rose-600: #cb5c81;
+            --rose-500: #e56f94;
+            --rose-300: #ffabc1;
+            --rose-100: #ffe5ed;
+            --ink: #3c2931;
+            --muted: #7b626c;
+            --card: rgba(255, 252, 253, 0.78);
+            --card-strong: rgba(255, 255, 255, 0.9);
+            --card-soft: rgba(255, 255, 255, 0.5);
+            --border: rgba(255, 255, 255, 0.84);
+            --line: rgba(120, 62, 81, 0.13);
+            --shadow: 0 22px 60px rgba(103, 56, 73, 0.16);
+            --shadow-hover: 0 28px 70px rgba(103, 56, 73, 0.22);
+            --focus: 0 0 0 4px rgba(229, 111, 148, 0.24);
+            --radius-xl: 28px;
+            --radius-lg: 22px;
+            --radius-md: 16px;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-            line-height: 1.5;
-            font-weight: 400;
-            background-color: #fff5f7;
-            color: #222;
-            min-height: 100vh;
-            overflow-x: hidden;
         }
 
-        /* === 视频背景样式 === */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+            line-height: 1.5;
+            font-weight: 400;
+            background: #fff6f8;
+            color: var(--ink);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+        }
+
+        ::selection {
+            background: rgba(229, 111, 148, 0.24);
+            color: var(--rose-800);
+        }
+
+        button {
+            font: inherit;
+        }
+
+        button:focus-visible,
+        [tabindex]:focus-visible,
+        .modal-close:focus-visible {
+            outline: none;
+            box-shadow: var(--focus);
+        }
+
+        /* === 视频背景 === */
         .video-background {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             overflow: hidden;
-            z-index: -1;
+            z-index: -2;
             pointer-events: none;
+            background: #f9edf1;
         }
 
         .video-background video {
-            min-width: 100%;
-            min-height: 100%;
+            width: 100%;
+            height: 100%;
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            inset: 0;
             object-fit: cover;
-            opacity: 0.6;
+            object-position: center;
+            opacity: 0.68;
+            filter: saturate(1.05) brightness(1.02);
+        }
+
+        .ripple-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            opacity: 0.68;
+            filter: saturate(1.05) brightness(1.02);
+        }
+
+        .video-background.webgl-ready video {
+            opacity: 0;
+        }
+
+        .video-background.webgl-ready .ripple-canvas {
+            display: block;
+        }
+
+        .video-background::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(180deg, rgba(255, 248, 250, 0.2) 0%, rgba(255, 246, 249, 0.5) 55%, rgba(255, 243, 247, 0.76) 100%),
+                radial-gradient(circle at 50% 38%, rgba(255, 255, 255, 0.2), rgba(255, 238, 244, 0.2) 66%);
+        }
+
+        /* === 暗色模式 === */
+        body.dark {
+            --ink: #fff6fa;
+            --muted: #ceb8c1;
+            --card: rgba(39, 29, 35, 0.78);
+            --card-strong: rgba(48, 35, 42, 0.92);
+            --card-soft: rgba(255, 255, 255, 0.07);
+            --border: rgba(255, 255, 255, 0.12);
+            --line: rgba(255, 255, 255, 0.11);
+            --shadow: 0 22px 64px rgba(0, 0, 0, 0.34);
+            --shadow-hover: 0 28px 72px rgba(0, 0, 0, 0.42);
+            --rose-800: #ffc1d3;
+            --rose-700: #ffa6bf;
+            --rose-600: #ff8eae;
+            --rose-500: #f2799e;
+            --rose-100: rgba(255, 119, 157, 0.16);
+            background: #191417;
+            color: var(--ink);
+            color-scheme: dark;
+        }
+
+        body.dark .video-background {
+            background: #161114;
         }
 
         body.dark .video-background video {
-            opacity: 0.4;
+            opacity: 0.34;
+            filter: saturate(0.86) brightness(0.68);
         }
 
-        /* === 暗色模式样式 === */
-        body.dark {
-            background-color: #1a1a1a;
-            color: #eee;
+        body.dark .video-background.webgl-ready .ripple-canvas {
+            opacity: 0.34;
+            filter: saturate(0.86) brightness(0.68);
         }
 
-        body.dark .profile-card,
-        body.dark .work-display,
-        body.dark .salary-clicker,
-        body.dark .modal {
-            background: #2d2d2d;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-        }
-
-        body.dark .btn-secondary {
-            background: #3c3c3c;
-            color: #ddd;
-            border-color: #555;
-        }
-
-        body.dark .interactive-text {
-            color: #aaa;
-        }
-
-        body.dark .subtitle,
-        body.dark p {
-            color: #ccc;
-        }
-
-        body.dark .heart {
-            color: #ff477e;
+        body.dark .video-background::after {
+            background:
+                linear-gradient(180deg, rgba(20, 15, 18, 0.22) 0%, rgba(24, 17, 21, 0.58) 55%, rgba(21, 15, 18, 0.78) 100%),
+                radial-gradient(circle at 50% 38%, rgba(121, 67, 87, 0.14), rgba(12, 9, 11, 0.1) 68%);
         }
 
         #root {
@@ -88,21 +163,18 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 40px 20px;
+            padding: 34px 28px 52px;
             position: relative;
         }
-        
+
         .heart-background {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             pointer-events: none;
             z-index: 0;
             overflow: hidden;
         }
-        
+
         .heart {
             position: absolute;
             color: #ff6f91;
@@ -114,512 +186,1131 @@
             animation-duration: 15s;
             animation-timing-function: ease-in-out;
             animation-iteration-count: infinite;
+            text-shadow: 0 4px 14px rgba(255, 111, 145, 0.2);
         }
-        
+
+        body.dark .heart {
+            color: #ff7ea9;
+            opacity: 0.72;
+        }
+
         .container {
-            max-width: 1200px;
             width: 100%;
-            z-index: 1;
+            max-width: 1280px;
             position: relative;
+            z-index: 1;
         }
-        
+
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 28px;
+            position: relative;
+            z-index: 2;
         }
-        
-        .header h1 {
-            font-size: 2.5rem;
-            font-weight: bold;
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
             margin-bottom: 10px;
+            color: var(--rose-700);
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
         }
-        
+
+        .eyebrow::before,
+        .eyebrow::after {
+            content: "";
+            width: 28px;
+            height: 1px;
+            background: currentColor;
+            opacity: 0.55;
+        }
+
+        .header h1 {
+            margin-bottom: 10px;
+            color: var(--ink);
+            font-family: "Avenir Next", "Segoe UI", "Noto Sans SC", sans-serif;
+            font-size: clamp(2.3rem, 5vw, 4.25rem);
+            font-weight: 800;
+            letter-spacing: -0.055em;
+            line-height: 1.08;
+            padding: 0.07em 0 0.11em;
+            margin: -0.07em 0 -0.11em;
+            text-shadow: 0 4px 30px rgba(255, 255, 255, 0.66);
+        }
+
+        body.dark .header h1 {
+            text-shadow: 0 5px 32px rgba(0, 0, 0, 0.36);
+        }
+
+        .name-accent {
+            display: inline-block;
+            padding: 0.07em 0.05em 0.11em;
+            margin: -0.07em -0.05em -0.11em;
+            background: linear-gradient(135deg, var(--rose-800), var(--rose-500));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
         .header .subtitle {
-            color: #666;
-            font-size: 1.2rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            flex-wrap: wrap;
+            gap: 8px 10px;
+            color: var(--muted);
+            font-size: 0.97rem;
+            font-weight: 600;
+        }
+
+        .header .subtitle .dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--rose-500);
+            opacity: 0.72;
         }
 
         .header .subtitle i {
-            animation: bounce 2s infinite;
-            color: #ff6f91;
+            color: var(--rose-500);
+            animation: bounce 2.4s infinite;
         }
-        
-        .main-content {
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(320px, 1fr)) minmax(300px, 0.86fr);
+            grid-template-areas:
+                "profile overview calendar"
+                "tools tools calendar";
+            gap: 22px;
+            align-items: stretch;
+        }
+
+        .glass-card {
+            position: relative;
+            background: var(--card);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(22px) saturate(135%);
+            -webkit-backdrop-filter: blur(22px) saturate(135%);
+            transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease, background-color 0.3s ease;
+        }
+
+        .profile-card {
+            grid-area: profile;
+            min-height: 100%;
+            width: 100%;
+            padding: 34px 30px 28px;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .profile-card {
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
-            width: 320px;
-            text-align: center;
-            transition: transform 0.2s, box-shadow 0.2s;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .profile-card:hover {
-            transform: translateY(-10px) rotate(1deg);
-            box-shadow: 0 12px 25px rgba(0,0,0,0.1);
-        }
-        
-        .avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: #ffd1dc;
-            margin: 0 auto 20px;
-            display: flex;
             justify-content: center;
-            align-items: center;
-            font-size: 2.5rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            overflow: hidden;
+            text-align: center;
         }
-        
+
+        .profile-card::before {
+            content: "";
+            position: absolute;
+            width: 190px;
+            height: 190px;
+            top: -116px;
+            right: -66px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 168, 192, 0.42), rgba(255, 168, 192, 0));
+            pointer-events: none;
+        }
+
+        .profile-card::after {
+            content: "";
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            bottom: -82px;
+            left: -48px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 205, 221, 0.5), rgba(255, 205, 221, 0));
+            pointer-events: none;
+        }
+
+        .avatar {
+            width: 132px;
+            height: 132px;
+            margin: 0 auto 22px;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #ffe0e9, #ffc7d8);
+            border: 4px solid rgba(255, 255, 255, 0.92);
+            box-shadow: 0 14px 34px rgba(129, 64, 87, 0.22), 0 0 0 7px rgba(255, 255, 255, 0.28);
+        }
+
+        body.dark .avatar {
+            border-color: rgba(255, 255, 255, 0.16);
+            box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35), 0 0 0 7px rgba(255, 255, 255, 0.05);
+        }
+
         .avatar img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-        
+
+        .profile-copy {
+            position: relative;
+            z-index: 1;
+        }
+
         .profile-card p {
-            margin-bottom: 15px;
-            line-height: 1.6;
+            margin-bottom: 6px;
+            color: var(--ink);
+            font-size: 1.02rem;
+            line-height: 1.65;
         }
-        
+
+        .profile-card .profile-line:last-child {
+            margin-bottom: 18px;
+        }
+
         .interactive-text {
-            margin-top: 15px;
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            margin-top: 12px;
+            padding: 10px 12px;
+            border: 0;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.42);
+            color: var(--muted);
             font-size: 0.9rem;
-            color: #888;
+            font-weight: 600;
+            line-height: 1.45;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
         }
-        
+
         .interactive-text:hover {
-            color: #000;
-            transform: rotate(1deg);
+            background: var(--rose-100);
+            color: var(--rose-700);
+            transform: translateY(-2px);
         }
-        
+
         .random-text {
-            margin-top: 15px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            min-height: 24px;
-            display: inline-block;
-            transition: all 0.5s;
+            position: relative;
+            z-index: 1;
+            display: block;
+            min-height: 42px;
+            margin-top: 12px;
+            color: var(--rose-700);
+            font-size: 1rem;
+            font-weight: 700;
+            line-height: 1.55;
         }
-        
+
+        .overview-column {
+            grid-area: overview;
+            min-width: 0;
+            display: grid;
+            grid-template-rows: 1fr auto auto;
+            gap: 16px;
+        }
+
+        .status-stack {
+            display: grid;
+            grid-template-rows: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+
+        .work-display-compact {
+            min-height: 96px;
+            padding: 17px 21px;
+        }
+
+        .work-display-compact .card-icon {
+            width: 44px;
+            height: 44px;
+            flex-basis: 44px;
+            border-radius: 14px;
+            font-size: 1.2rem;
+        }
+
+        .work-display-compact .dynamic-work {
+            font-size: 0.98rem;
+        }
+
         .work-display {
-            background: white;
-            padding: 20px 30px;
-            border-radius: 20px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
-            width: 320px;
-            text-align: center;
-            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            min-height: 104px;
+            padding: 23px 24px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            gap: 17px;
+            text-align: left;
         }
-        
-        .work-display:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+
+        .card-icon {
+            width: 52px;
+            height: 52px;
+            flex: 0 0 52px;
+            display: grid;
+            place-items: center;
+            border-radius: 17px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(255, 224, 234, 0.88));
+            box-shadow: 0 10px 24px rgba(113, 55, 76, 0.1);
+            font-size: 1.45rem;
         }
-        
-        .work-display p {
-            font-size: 1.1rem;
-            margin-bottom: 0;
+
+        body.dark .card-icon {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 113, 157, 0.11));
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
         }
-        
+
+        .card-copy {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .card-label {
+            color: var(--muted);
+            font-size: 0.76rem;
+            font-weight: 800;
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+        }
+
         .dynamic-work {
-            font-size: 1.1rem;
-            font-weight: 600;
-            min-height: 24px;
-            display: inline-block;
-            transition: all 0.5s;
-            margin-left: 5px;
+            min-height: 0;
+            margin: 0;
+            display: block;
+            color: var(--ink);
+            font-size: 1.04rem;
+            font-weight: 750;
+            line-height: 1.42;
+            overflow-wrap: anywhere;
         }
-        
+
+        #dynamicWork,
+        #countdown {
+            color: var(--rose-700);
+        }
+
         .button-container {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin: 0;
+        }
+
+        .btn {
+            min-height: 54px;
+            padding: 12px 20px;
+            border: 0;
+            border-radius: 18px;
+            cursor: pointer;
+            font-size: 0.96rem;
+            font-weight: 750;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .btn-primary {
+            color: #fff;
+            background: linear-gradient(135deg, var(--rose-500), var(--rose-600));
+            box-shadow: 0 12px 26px rgba(218, 89, 131, 0.27);
+        }
+
+        .btn-secondary {
+            color: var(--ink);
+            background: var(--card-strong);
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 24px rgba(103, 56, 73, 0.09);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 16px 32px rgba(218, 89, 131, 0.34);
+        }
+
+        .btn-secondary:hover {
+            background: var(--rose-100);
+            box-shadow: 0 13px 28px rgba(103, 56, 73, 0.13);
+        }
+
+        .btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .quick-modules {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .quick-module {
+            min-width: 0;
+            min-height: 64px;
+            padding: 12px 14px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--ink);
+            text-align: left;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .quick-icon {
+            width: 36px;
+            height: 36px;
+            flex: 0 0 36px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            background: var(--rose-100);
+            font-size: 1rem;
+        }
+
+        .quick-copy {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+
+        .quick-copy strong {
+            color: var(--ink);
+            font-size: 0.88rem;
+            font-weight: 800;
+            line-height: 1.25;
+            white-space: nowrap;
+        }
+
+        .quick-copy small {
+            overflow: hidden;
+            color: var(--muted);
+            font-size: 0.68rem;
+            line-height: 1.3;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .quick-arrow {
+            margin-left: auto;
+            color: var(--rose-600);
+            font-size: 0.9rem;
+            transition: transform 0.2s ease;
+        }
+
+        .quick-module:hover {
+            background: var(--card-strong);
+            border-color: var(--rose-300);
+            transform: translateY(-2px);
+        }
+
+        .quick-module:hover .quick-arrow {
+            transform: translate(2px, -2px);
+        }
+
+        .tools-grid {
+            grid-area: tools;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 22px;
+            align-items: stretch;
+        }
+
+        .salary-clicker {
+            width: 100%;
+            max-width: none;
+            min-height: 226px;
+            margin: 0;
+            padding: 27px 25px;
+            border-radius: var(--radius-xl);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .salary-clicker::before {
+            content: "";
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            top: -86px;
+            right: -50px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 170, 194, 0.32), rgba(255, 170, 194, 0));
+            pointer-events: none;
+        }
+
+        .salary-clicker h2 {
+            margin-bottom: 4px;
+            color: var(--ink);
+            font-size: 1.34rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .salary-clicker .subtitle {
+            margin-bottom: 14px;
+            color: var(--muted);
+            font-size: 0.86rem;
+            font-weight: 600;
+        }
+
+        .salary-amount {
+            margin: 8px 0 2px;
+            color: var(--rose-700);
+            font-family: "Avenir Next", "Segoe UI", sans-serif;
+            font-size: clamp(2rem, 4vw, 2.65rem);
+            font-weight: 850;
+            letter-spacing: -0.045em;
+            line-height: 1.12;
+            overflow-wrap: anywhere;
+        }
+
+        #foodResult {
+            min-height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(1.45rem, 3vw, 2rem);
+            letter-spacing: -0.03em;
+        }
+
+        .card-actions {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 15px;
-            margin: 20px 0;
+            gap: 10px;
+            margin-top: 18px;
         }
-        
-        .btn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.3s;
-            font-family: "Noto Sans SC", sans-serif;
-        }
-        
-        .btn-primary {
-            background: #ff6f91;
-            color: white;
-            box-shadow: 0 4px 8px rgba(255,111,145,0.4);
-        }
-        
-        .btn-primary:hover {
-            background: #ff4c7a;
-            transform: scale(1.1);
-            box-shadow: 0 6px 12px rgba(255,111,145,0.6);
-        }
-        
-        .btn-secondary {
-            background: #f8f9fa;
-            border: 1px solid #e0e0e0;
-            color: #666;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        
-        .btn-secondary:hover {
-            background: #e9ecef;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        
-        .salary-clicker {
-            width: 100%;
-            max-width: 400px;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
-            padding: 30px;
-            text-align: center;
-            margin: 30px auto;
-        }
-        
-        .salary-clicker h2 {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #ff6f91;
-        }
-        
-        .salary-clicker .subtitle {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 20px;
-        }
-        
-        .salary-amount {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #ff6f91;
-            margin: 20px 0;
-            transition: transform 0.3s;
-        }
-        
+
         .salary-btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 50px;
+            min-height: 42px;
+            padding: 10px 18px;
+            border: 0;
+            border-radius: 14px;
+            color: #fff;
+            background: linear-gradient(135deg, var(--rose-500), var(--rose-600));
+            box-shadow: 0 10px 22px rgba(218, 89, 131, 0.22);
             cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: all 0.2s;
+            font-size: 0.9rem;
+            font-weight: 750;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
         }
-        
-        .salary-main {
-            background: #ff6f91;
-            color: white;
+
+        .salary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 13px 25px rgba(218, 89, 131, 0.3);
         }
-        
-        .salary-main:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 12px rgba(255,111,145,0.3);
+
+        .salary-btn:active {
+            transform: scale(0.97);
         }
-        
-        .salary-main:active {
-            transform: scale(0.95);
-        }
-        
+
         .reset-btn {
-            background: #6c757d;
-            color: white;
+            color: var(--muted);
+            background: var(--card-soft);
+            border: 1px solid var(--line);
+            box-shadow: none;
         }
-        
+
         .reset-btn:hover {
-            transform: scale(1.05);
+            color: var(--rose-700);
+            background: var(--rose-100);
+            box-shadow: none;
         }
-        
+
+        .calendar-sidebar {
+            grid-area: calendar;
+            position: relative;
+            top: auto;
+            align-self: stretch;
+            width: 100%;
+            min-height: 100%;
+            max-height: none;
+            padding: 23px;
+            overflow: visible;
+            border-radius: var(--radius-xl);
+            color: var(--ink);
+            font-size: 0.88rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .calendar-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 17px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .calendar-kicker {
+            display: block;
+            margin-bottom: 3px;
+            color: var(--rose-700);
+            font-size: 0.66rem;
+            font-weight: 850;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+
+        .calendar-sidebar h3 {
+            margin: 0;
+            color: var(--ink);
+            font-size: 1.12rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .calendar-dot {
+            width: 10px;
+            height: 10px;
+            flex: 0 0 10px;
+            margin-top: 7px;
+            border-radius: 50%;
+            background: var(--rose-500);
+            box-shadow: 0 0 0 5px var(--rose-100);
+        }
+
+        .calendar-body {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            align-content: space-between;
+        }
+
+        .calendar-date-block {
+            grid-column: 1 / -1;
+            padding: 13px 14px;
+            border-radius: 15px;
+            background: var(--card-soft);
+            border: 1px solid var(--line);
+        }
+
+        .calendar-date-block p {
+            margin: 2px 0;
+            color: var(--muted);
+        }
+
+        .calendar-date-block .calendar-label {
+            margin-bottom: 7px;
+            color: var(--muted);
+            font-size: 0.74rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        #dateDisplay {
+            color: var(--ink);
+            font-size: 1.08rem;
+            font-weight: 850;
+            line-height: 1.35;
+        }
+
+        #lunarDisplay {
+            font-size: 0.76rem;
+            line-height: 1.4;
+        }
+
+        .calendar-divider {
+            grid-column: 1 / -1;
+            height: 1px;
+            margin: 6px 0;
+            background: var(--line);
+        }
+
+        .countdown-item {
+            min-width: 0;
+            margin: 0;
+            padding: 10px 11px;
+            border-radius: 13px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            background: var(--card-soft);
+            border: 1px solid var(--line);
+            color: var(--muted);
+            font-size: 0.75rem;
+            line-height: 1.35;
+        }
+
+        .countdown-item span {
+            color: var(--ink);
+            font-size: 0.93rem;
+            font-weight: 850;
+        }
+
+        body.dark .calendar-date-block,
+        body.dark .countdown-item {
+            background: rgba(255, 255, 255, 0.055);
+        }
+
         .modal-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
+            inset: 0;
+            z-index: 100;
+            padding: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 100;
+            background: rgba(45, 25, 34, 0.42);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            animation: fadeIn 0.2s ease both;
         }
-        
+
         .modal {
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            max-width: 400px;
-            width: 90%;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: min(420px, 100%);
+            padding: 26px;
+            border-radius: 24px;
+            background: var(--card-strong);
+            border: 1px solid var(--border);
+            box-shadow: 0 26px 70px rgba(53, 28, 38, 0.28);
+            color: var(--ink);
+            animation: modalIn 0.24s ease both;
         }
-        
+
         .modal-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
             margin-bottom: 20px;
         }
-        
+
         .modal-header h3 {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #222;
+            color: var(--ink);
+            font-size: 1.25rem;
+            font-weight: 800;
             text-align: center;
         }
-        
+
         .modal-close {
-            color: #666;
+            width: 34px;
+            height: 34px;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            color: var(--muted);
             cursor: pointer;
-            transition: color 0.2s;
+            transition: color 0.2s ease, background-color 0.2s ease;
         }
-        
+
         .modal-close:hover {
-            color: #000;
+            color: var(--rose-700);
+            background: var(--rose-100);
         }
-        
+
         .modal-content {
-            font-size: 1.1rem;
-            margin-bottom: 20px;
+            margin-bottom: 22px;
+            color: var(--ink);
+            font-size: 1.03rem;
+            line-height: 1.65;
             text-align: center;
-            line-height: 1.6;
         }
-        
+
         .highlight {
-            font-weight: 600;
-            color: #ff6f91;
+            color: var(--rose-700);
+            font-weight: 800;
         }
-        
+
         .toast {
             position: fixed;
-            bottom: 20px;
             left: 50%;
-            transform: translateX(-50%);
-            background: #333;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            bottom: 22px;
             z-index: 1000;
+            max-width: min(90vw, 520px);
+            padding: 12px 18px;
+            border-radius: 14px;
+            background: rgba(49, 34, 41, 0.92);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            box-shadow: 0 16px 40px rgba(45, 24, 33, 0.26);
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 650;
+            text-align: center;
             opacity: 0;
-            transition: opacity 0.3s;
+            pointer-events: none;
+            transform: translate(-50%, 16px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
         }
-        
+
         .toast.show {
             opacity: 1;
+            transform: translate(-50%, 0);
         }
 
         .theme-toggle {
             position: fixed;
             top: 20px;
             left: 20px;
-            background: #fff;
-            border: none;
-            border-radius: 50%;
+            z-index: 20;
             width: 50px;
             height: 50px;
-            font-size: 1.2rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: grid;
+            place-items: center;
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            color: var(--rose-700);
+            background: var(--card-strong);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             cursor: pointer;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #ff6f91;
+            transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(-8deg) scale(1.05);
         }
 
         .theme-toggle.dark-mode-active {
-            background: #333;
-            color: #ffd1dc;
+            color: #ffd5e2;
+            background: rgba(51, 36, 43, 0.88);
         }
-        
-        @media (max-width: 768px) {
+
+        @media (hover: hover) and (pointer: fine) {
+            .glass-card:hover {
+                transform: translateY(-4px);
+                box-shadow: var(--shadow-hover);
+                border-color: rgba(255, 255, 255, 0.96);
+            }
+
+            body.dark .glass-card:hover {
+                border-color: rgba(255, 255, 255, 0.2);
+            }
+
+            .profile-card:hover {
+                transform: translateY(-5px);
+            }
+        }
+
+        @media (max-width: 1100px) {
+            .dashboard {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                grid-template-areas:
+                    "profile overview"
+                    "calendar tools";
+            }
+
+            .calendar-sidebar {
+                position: relative;
+                top: auto;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 780px) {
+            #root {
+                padding: 22px 16px 40px;
+            }
+
+            .theme-toggle {
+                top: 14px;
+                left: 14px;
+                width: 46px;
+                height: 46px;
+            }
+
+            .header {
+                margin-top: 42px;
+                margin-bottom: 22px;
+            }
+
             .header h1 {
-                font-size: 2rem;
+                font-size: clamp(2.1rem, 10vw, 3.2rem);
             }
-            
+
             .header .subtitle {
-                font-size: 1rem;
+                font-size: 0.88rem;
+                line-height: 1.55;
             }
-            
-            .profile-card, .work-display {
-                width: 100%;
-                max-width: 320px;
+
+            .dashboard {
+                grid-template-columns: 1fr;
+                grid-template-areas:
+                    "profile"
+                    "overview"
+                    "calendar"
+                    "tools";
+                gap: 16px;
             }
-            
-            .button-container {
-                flex-direction: column;
+
+            .profile-card,
+            .work-display,
+            .salary-clicker,
+            .calendar-sidebar {
+                border-radius: 22px;
+            }
+
+            .profile-card {
+                padding: 30px 24px 26px;
+            }
+
+            .avatar {
+                width: 118px;
+                height: 118px;
+            }
+
+            .work-display {
+                min-height: 94px;
+                padding: 20px;
+            }
+
+            .calendar-body {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 520px) {
+            .eyebrow {
+                font-size: 0.64rem;
+                letter-spacing: 0.17em;
+            }
+
+            .eyebrow::before,
+            .eyebrow::after {
+                width: 18px;
+            }
+
+            .header .subtitle .dot {
+                display: none;
+            }
+
+            .button-container,
+            .quick-modules {
+                grid-template-columns: 1fr;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .calendar-body {
+                grid-template-columns: 1fr;
+            }
+
+            .countdown-item {
+                flex-direction: row;
                 align-items: center;
+                justify-content: space-between;
+                gap: 12px;
             }
-            
-            .btn {
+
+            .countdown-item span {
+                flex: 0 0 auto;
+                text-align: right;
+            }
+
+            .card-actions {
                 width: 100%;
-                max-width: 250px;
+            }
+
+            .salary-btn {
+                flex: 1 1 auto;
             }
         }
-        
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+            }
+        }
+
         @keyframes float {
-            0% {
-                transform: translate(0, 0) rotate(0deg);
-                opacity: 0;
-            }
-            25% {
-                transform: translate(5px, -15px) rotate(5deg);
-                opacity: 0.3;
-            }
-            50% {
-                transform: translate(-5px, -30px) rotate(-5deg);
-                opacity: 0.4;
-            }
-            75% {
-                transform: translate(3px, -45px) rotate(3deg);
-                opacity: 0.3;
-            }
-            100% {
-                transform: translate(0, -60px) rotate(0deg);
-                opacity: 0;
-            }
+            0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+            25% { transform: translate(5px, -15px) rotate(5deg); opacity: 0.3; }
+            50% { transform: translate(-5px, -30px) rotate(-5deg); opacity: 0.4; }
+            75% { transform: translate(3px, -45px) rotate(3deg); opacity: 0.3; }
+            100% { transform: translate(0, -60px) rotate(0deg); opacity: 0; }
         }
-        
+
         @keyframes bounce {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
     </style>
 </head>
 <body>
     <!-- 视频背景 -->
     <div class="video-background">
-        <video autoplay muted loop playsinline>
+        <video id="backgroundVideo" autoplay muted loop playsinline>
             <source src="风吹花草落瓣云动画.mp4" type="video/mp4">
         </video>
+        <canvas id="rippleCanvas" class="ripple-canvas" aria-hidden="true"></canvas>
     </div>
 
-    <div id="root">
-        <!-- 暗色模式切换按钮 -->
-        <button class="theme-toggle" id="themeToggle">
-            <i class="fa-solid fa-moon"></i>
+        <div id="root">
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换明暗主题" aria-pressed="false" title="切换明暗主题">
+            <i class="fa-solid fa-moon" aria-hidden="true"></i>
         </button>
 
         <div class="container">
-            <!-- 心形背景 -->
-            <div class="heart-background" id="heartBackground"></div>
-            
-            <!-- 标题区域 -->
-            <div class="header">
-                <h1>Hi，我是 Yao</h1>
+            <div class="heart-background" id="heartBackground" aria-hidden="true"></div>
+
+            <header class="header">
+                <div class="eyebrow">Personal Dashboard</div>
+                <h1>Hi，我是 <span class="name-accent">Yao</span></h1>
                 <div class="subtitle">
-                    来自 Product Sourcing-商务组 & 徒步社社长 & 网球社副社长
-                    <i class="fa-solid fa-rocket"></i>
+                    <span>Product Sourcing · 商务组</span>
+                    <span class="dot" aria-hidden="true"></span>
+                    <span>徒步社社长</span>
+                    <span class="dot" aria-hidden="true"></span>
+                    <span>网球社副社长</span>
+                    <i class="fa-solid fa-rocket" aria-hidden="true"></i>
                 </div>
-            </div>
-            
-            <!-- 主要内容区域 -->
-            <div class="main-content">
-                <!-- 个人信息卡片 -->
-                <div class="profile-card">
-                    <div class="avatar"><img src="Yao.png" alt="Yao"></div>
-                    <p>白天管理外包，晚上管理徒步社，周末管理不了自己的作息。</p>
-                    <div class="interactive-text" id="randomTextTrigger">
-                        👉 点我获取今日的胡言乱语
+            </header>
+
+            <main class="dashboard">
+                <section class="profile-card glass-card" aria-label="个人介绍">
+                    <div class="avatar"><img src="Yao.png" alt="Yao 的头像"></div>
+                    <div class="profile-copy">
+                        <p class="profile-line">白天管理外包，晚上管理徒步社，</p>
+                        <p class="profile-line">周末管理不了自己的作息。</p>
                     </div>
-                    <div class="random-text" id="randomText"></div>
-                </div>
-                
-                <!-- 工作内容显示 -->
-                <div class="work-display">
-                    <p>
-                        我正在做：
-                        <span class="dynamic-work" id="dynamicWork"></span>
-                    </p>
+                    <button class="interactive-text" id="randomTextTrigger" type="button">👉 点我获取今日的胡言乱语</button>
+                    <div class="random-text" id="randomText" aria-live="polite"></div>
+                </section>
+
+                <div class="overview-column">
+                    <div class="status-stack">
+                        <div class="work-display glass-card">
+                            <div class="card-icon" aria-hidden="true">💻</div>
+                            <div class="card-copy">
+                                <span class="card-label">我正在做</span>
+                                <strong class="dynamic-work" id="dynamicWork"></strong>
+                            </div>
+                        </div>
+
+                        <div class="work-display work-display-compact glass-card">
+                            <div class="card-icon" aria-hidden="true">⏳</div>
+                            <div class="card-copy">
+                                <span class="card-label">离下班还有</span>
+                                <strong class="dynamic-work" id="countdown">正在计算...</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="button-container">
+                        <button class="btn btn-primary" id="emailBtn" type="button">📧 发送邮件</button>
+                        <button class="btn btn-secondary" id="locationBtn" type="button">📍 快速找到我</button>
+                    </div>
+
+                    <div class="quick-modules" aria-label="社团文档">
+                        <button class="quick-module glass-card" id="hikingDocBtn" type="button" data-doc-url="">
+                            <span class="quick-icon" aria-hidden="true">🥾</span>
+                            <span class="quick-copy">
+                                <strong>徒步社文档</strong>
+                                <small>路线、活动与社团资料</small>
+                            </span>
+                            <span class="quick-arrow" aria-hidden="true">↗</span>
+                        </button>
+                        <button class="quick-module glass-card" id="tennisDocBtn" type="button" data-doc-url="https://tennis.juutn.com/">
+                            <span class="quick-icon" aria-hidden="true">🎾</span>
+                            <span class="quick-copy">
+                                <strong>网球社文档</strong>
+                                <small>排期、活动与社团资料</small>
+                            </span>
+                            <span class="quick-arrow" aria-hidden="true">↗</span>
+                        </button>
+                    </div>
                 </div>
 
-                <!-- 下班倒计时 -->
-                <div class="work-display">
-                    <p>
-                        ⏳ 离下班还有：
-                        <span class="dynamic-work" id="countdown">正在计算...</span>
-                    </p>
-                </div>
-            </div>
-            
-            <!-- 按钮区域 -->
-            <div class="button-container">
-                <button class="btn btn-primary" id="emailBtn">📧 发送邮件</button>
-                <button class="btn btn-secondary" id="locationBtn">📍 快速找到我</button>
-            </div>
-            
-            <!-- 薪资加薪器 -->
-            <div class="salary-clicker">
-                <h2>💰 薪资加薪器</h2>
-                <p class="subtitle">每次点击 +500 元</p>
-                <div class="salary-amount" id="salaryAmount">¥0</div>
-                <div style="display:flex;gap:10px;justify-content:center;margin-top:15px;">
-                    <button class="salary-btn salary-main" id="salaryBtn">点我 +500</button>
-                    <button class="salary-btn reset-btn" id="resetBtn">🔁 重置数据</button>
-                </div>
-            </div>
+                <aside class="calendar-sidebar glass-card" aria-label="Yao 的打工日历">
+                    <div class="calendar-header">
+                        <div>
+                            <span class="calendar-kicker">Calendar</span>
+                            <h3>📅 Yao 的打工日历</h3>
+                        </div>
+                        <span class="calendar-dot" aria-hidden="true"></span>
+                    </div>
+                    <div class="calendar-body">
+                        <div class="calendar-date-block">
+                            <p class="calendar-label"><strong>📆 当前时间</strong></p>
+                            <p id="dateDisplay">-</p>
+                            <p id="lunarDisplay">-</p>
+                        </div>
+                        <div class="calendar-divider" aria-hidden="true"></div>
+                        <p class="countdown-item">💼 距发工资 <span id="salaryCountdown">加载中...</span></p>
+                        <p class="countdown-item">🎄 距元旦 <span id="countdownnewYear">-</span></p>
+                        <p class="countdown-item">🐉 距春节 <span id="countdownspring">-</span></p>
+                        <p class="countdown-item">🌸 距清明 <span id="countdownqingming">-</span></p>
+                        <p class="countdown-item">🛠️ 距劳动节 <span id="countdownlabor">-</span></p>
+                        <p class="countdown-item">🥢 距端午节 <span id="countdowndragonBoat">-</span></p>
+                        <p class="countdown-item">🎑 距中秋节 <span id="countdownmidAutumn">-</span></p>
+                        <p class="countdown-item">🇨🇳 距国庆节 <span id="countdownnational">-</span></p>
+                        <div class="calendar-divider" aria-hidden="true"></div>
+                        <p class="countdown-item">📈 距股指交割 <span id="countdownIndex">-</span></p>
+                    </div>
+                </aside>
 
-            <!-- 中午吃什么 -->
-            <div class="salary-clicker" id="lunchPicker">
-                <h2>🍚 今天中午吃什么</h2>
-                <p class="subtitle">拯救选择困难症</p>
-                <div class="salary-amount" id="foodResult">🤔 等你点我</div>
-                <div style="display:flex;gap:10px;justify-content:center;margin-top:15px;">
-                    <button class="salary-btn salary-main" id="chooseFoodBtn">开始选择</button>
-                </div>
-            </div>
-        </div>
+                <div class="tools-grid">
+                    <section class="salary-clicker glass-card" aria-label="薪资加薪器">
+                        <h2>💰 薪资加薪器</h2>
+                        <p class="subtitle">每次点击 +500 元</p>
+                        <div class="salary-amount" id="salaryAmount">¥0</div>
+                        <div class="card-actions">
+                            <button class="salary-btn salary-main" id="salaryBtn" type="button">点我 +500</button>
+                            <button class="salary-btn reset-btn" id="resetBtn" type="button">🔁 重置数据</button>
+                        </div>
+                    </section>
 
-        <!-- ========== 右侧悬浮日历（玻璃态）========== -->
-        <div class="calendar-sidebar">
-            <div class="calendar-header">
-                <h3>📅 Yao 的打工日历</h3>
-            </div>
-            <div class="calendar-body">
-                <p><strong>📆 当前时间</strong></p>
-                <p id="dateDisplay">-</p>
-                <p id="lunarDisplay">-</p>
-                <hr style="border:0;border-top:1px solid #eee;margin:10px 0;">
-                <p>💼 距发工资：<span id="salaryCountdown">加载中...</span></p>
-                <p>🎄 距元旦：<span id="countdownnewYear">-</span></p>
-                <p>🐉 距春节：<span id="countdownspring">-</span></p>
-                <p>🌸 距清明：<span id="countdownqingming">-</span></p>
-                <p>🛠️ 距劳动节：<span id="countdownlabor">-</span></p>
-                <p>🥢 距端午节：<span id="countdowndragonBoat">-</span></p>
-                <p>🎑 距中秋节：<span id="countdownmidAutumn">-</span></p>
-                <p>🇨🇳 距国庆节：<span id="countdownnational">-</span></p>
-                <hr style="border:0;border-top:1px solid #eee;margin:10px 0;">
-                <p>📈 距股指交割：<span id="countdownIndex">-</span></p>
-            </div>
+                    <section class="salary-clicker glass-card" id="lunchPicker" aria-label="今天中午吃什么">
+                        <h2>🍚 今天中午吃什么</h2>
+                        <p class="subtitle">拯救选择困难症</p>
+                        <div class="salary-amount" id="foodResult">🤔 等你点我</div>
+                        <div class="card-actions">
+                            <button class="salary-btn salary-main" id="chooseFoodBtn" type="button">开始选择</button>
+                        </div>
+                    </section>
+                </div>
+            </main>
         </div>
     </div>
 
@@ -937,7 +1628,7 @@
           const modal = document.createElement('div');
           modal.className = 'modal-overlay';
           modal.innerHTML = `
-            <div class="modal">
+            <div class="modal" role="dialog" aria-modal="true">
               <h3>${title}</h3>
               <div class="modal-content">${content.replace(/\n/g, '<br>')}</div>
               <div style="text-align:center;margin-top:20px;">
@@ -1017,10 +1708,10 @@
             const modal = document.createElement('div');
             modal.className = 'modal-overlay';
             modal.innerHTML = `
-              <div class="modal">
+              <div class="modal" role="dialog" aria-modal="true">
                 <div class="modal-header">
                   <h3>我的位置</h3>
-                  <div class="modal-close"><i class="fa-solid fa-times"></i></div>
+                  <button class="modal-close" type="button" aria-label="关闭"><i class="fa-solid fa-times" aria-hidden="true"></i></button>
                 </div>
                 <div class="modal-content">
                   <p>📍 2 楼（我又又又搬位置了）</p>
@@ -1038,6 +1729,28 @@
           });
         }
 
+        // ===== 社团文档模块 =====
+        function setupDocumentModules() {
+          const modules = [
+            { id: 'hikingDocBtn', label: '徒步社文档' },
+            { id: 'tennisDocBtn', label: '网球社文档' }
+          ];
+
+          modules.forEach(({ id, label }) => {
+            const button = document.getElementById(id);
+            if (!button) return;
+
+            button.addEventListener('click', () => {
+              const url = button.dataset.docUrl;
+              if (url) {
+                window.open(url, '_blank', 'noopener,noreferrer');
+              } else {
+                showToast(`📄 ${label}链接待配置`);
+              }
+            });
+          });
+        }
+
         // ===== 暗色模式 =====
         function setupThemeToggle() {
           const toggle = document.getElementById('themeToggle');
@@ -1050,6 +1763,9 @@
             toggle.classList.add('dark-mode-active');
           }
 
+          toggle.setAttribute('aria-pressed', String(isDark));
+          toggle.setAttribute('aria-label', isDark ? '切换到亮色主题' : '切换到暗色主题');
+
           toggle.addEventListener('click', () => {
             const isNowDark = document.body.classList.toggle('dark');
             if (isNowDark) {
@@ -1061,6 +1777,8 @@
               toggle.classList.remove('dark-mode-active');
               localStorage.setItem('theme', 'light');
             }
+            toggle.setAttribute('aria-pressed', String(isNowDark));
+            toggle.setAttribute('aria-label', isNowDark ? '切换到亮色主题' : '切换到暗色主题');
           });
         }
 
@@ -1082,66 +1800,410 @@
           setupLunchPicker();
           setupEmail();
           setupLocationModal();
+          setupDocumentModules();
           setupSalarySystem();
           setupThemeToggle();
         });
     </script>
+<script>
+    // ===== 鼠标涟漪背景 =====
+    (() => {
+        const mount = document.querySelector('.video-background');
+        const video = document.getElementById('backgroundVideo');
+        const canvas = document.getElementById('rippleCanvas');
 
-    <!-- ===== 右侧悬浮日历 - 玻璃态效果 ===== -->
-    <style>
-        .calendar-sidebar {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 280px;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 16px;
-            box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.1),
-                0 0 15px rgba(255, 111, 145, 0.15) inset;
-            padding: 20px;
-            font-size: 0.95rem;
-            z-index: 10;
-            max-height: 80vh;
-            overflow-y: auto;
-            border: 1px solid rgba(255, 111, 145, 0.3);
-            transition: all 0.3s ease;
+        if (!mount || !video || !canvas) return;
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            mount.dataset.rippleStatus = 'reduced-motion';
+            return;
         }
 
-        .calendar-sidebar:hover {
-            transform: translateY(-2px);
-            box-shadow:
-                0 12px 40px rgba(0, 0, 0, 0.15),
-                0 0 20px rgba(255, 111, 145, 0.2) inset;
+        const gl = canvas.getContext('webgl', {
+            alpha: false,
+            antialias: false,
+            depth: false,
+            stencil: false,
+            premultipliedAlpha: false,
+            preserveDrawingBuffer: false,
+            powerPreference: 'high-performance'
+        });
+
+        if (!gl) {
+            mount.dataset.rippleStatus = 'no-webgl';
+            return;
         }
 
-        .calendar-sidebar h3 {
-            margin: 0 0 15px;
-            font-size: 1.1rem;
-            color: #ff6f91;
+        const MAX_WAVES = 64;
+        const START_SCALE = 1.5;
+        const LIFE_CONSTANT = Math.log(500);
+        const waveVertex = `
+            precision highp float;
+            attribute vec2 aPosition;
+            uniform vec2 uOffset;
+            uniform vec2 uScale;
+            varying vec2 vUv;
+            void main() {
+                vUv = aPosition * 0.5 + 0.5;
+                gl_Position = vec4(uOffset + aPosition * uScale, 0.0, 1.0);
+            }
+        `;
+        const waveFragment = `
+            precision highp float;
+            varying vec2 vUv;
+            varying float vOpacity;
+            uniform float uRings;
+            uniform float uOpacity;
+            const float PI = 3.141592653589793;
+            const float EDGE = 0.006737947;
+            void main() {
+                vec2 p = vUv * 2.0 - 1.0;
+                float r = dot(p, p);
+                if (r > 1.0) discard;
+                float brush = (exp(-r * 5.0) - EDGE) / (1.0 - EDGE);
+                brush *= 0.55 + 0.45 * cos(sqrt(r) * PI * 2.0 * uRings);
+                gl_FragColor = vec4(vec3(brush * uOpacity * uOpacity), 1.0);
+            }
+        `;
+        const screenVertex = `
+            precision highp float;
+            attribute vec2 aPosition;
+            varying vec2 vUv;
+            void main() {
+                vUv = aPosition * 0.5 + 0.5;
+                gl_Position = vec4(aPosition, 0.0, 1.0);
+            }
+        `;
+        const compositeFragment = `
+            precision highp float;
+            varying vec2 vUv;
+            uniform sampler2D uTexture;
+            uniform sampler2D uDisplacement;
+            uniform vec2 uResolution;
+            uniform vec2 uTextureSize;
+            uniform vec2 uTexel;
+            uniform vec3 uTint;
+            uniform vec3 uHighlight;
+            uniform float uStrength;
+            uniform float uSwirl;
+            uniform float uDispersion;
+            uniform float uGlint;
+            uniform float uTintAmount;
+            const float TAU = 6.283185307179586;
+            vec2 coverUV(vec2 uv) {
+                vec2 safe = max(uTextureSize, vec2(1.0));
+                vec2 s = uResolution / safe;
+                vec2 scaledSize = safe * max(s.x, s.y);
+                vec2 offset = (uResolution - scaledSize) * 0.5;
+                return (uv * uResolution - offset) / scaledSize;
+            }
+            void main() {
+                float amount = texture2D(uDisplacement, vUv).r;
+                if (amount < 0.001) {
+                    gl_FragColor = texture2D(uTexture, coverUV(vUv));
+                    return;
+                }
+                vec2 base = coverUV(vUv);
+                float theta = amount * uSwirl * TAU;
+                vec2 dir = vec2(sin(theta), cos(theta));
+                vec2 push = dir * amount * uStrength;
+                vec3 color;
+                if (uDispersion > 0.001) {
+                    float split = uDispersion * 0.25;
+                    color.r = texture2D(uTexture, base + push * (1.0 + split)).r;
+                    color.g = texture2D(uTexture, base + push).g;
+                    color.b = texture2D(uTexture, base + push * (1.0 - split)).b;
+                } else {
+                    color = texture2D(uTexture, base + push).rgb;
+                }
+                if (uTintAmount > 0.001) {
+                    color = mix(color, color * uTint * 1.9, clamp(amount * 1.6, 0.0, 1.0) * uTintAmount);
+                }
+                if (uGlint > 0.001) {
+                    float ex = texture2D(uDisplacement, vUv + vec2(uTexel.x, 0.0)).r - texture2D(uDisplacement, vUv - vec2(uTexel.x, 0.0)).r;
+                    float ey = texture2D(uDisplacement, vUv + vec2(0.0, uTexel.y)).r - texture2D(uDisplacement, vUv - vec2(0.0, uTexel.y)).r;
+                    vec3 normal = normalize(vec3(-ex * 26.0, -ey * 26.0, 1.0));
+                    vec3 light = normalize(vec3(-0.35, 0.55, 1.0));
+                    float raw = pow(max(dot(normal, light), 0.0), 22.0);
+                    float flatSpec = pow(max(light.z, 0.0), 22.0);
+                    color += uHighlight * clamp((raw - flatSpec) / max(1.0 - flatSpec, 0.0001), 0.0, 1.0) * uGlint;
+                }
+                gl_FragColor = vec4(color, 1.0);
+            }
+        `;
+
+        const compileShader = (type, source) => {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                console.warn('Ripple shader error:', gl.getShaderInfoLog(shader));
+                gl.deleteShader(shader);
+                return null;
+            }
+            return shader;
+        };
+
+        const createProgram = (vertexSource, fragmentSource) => {
+            const vertex = compileShader(gl.VERTEX_SHADER, vertexSource);
+            const fragment = compileShader(gl.FRAGMENT_SHADER, fragmentSource);
+            if (!vertex || !fragment) return null;
+            const program = gl.createProgram();
+            gl.attachShader(program, vertex);
+            gl.attachShader(program, fragment);
+            gl.linkProgram(program);
+            gl.deleteShader(vertex);
+            gl.deleteShader(fragment);
+            if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+                console.warn('Ripple program error:', gl.getProgramInfoLog(program));
+                gl.deleteProgram(program);
+                return null;
+            }
+            return program;
+        };
+
+        const waveProgram = createProgram(waveVertex, waveFragment);
+        const compositeProgram = createProgram(screenVertex, compositeFragment);
+        if (!waveProgram || !compositeProgram) {
+            mount.dataset.rippleStatus = 'shader-error';
+            return;
         }
 
-        .calendar-body p {
-            margin: 8px 0;
-            line-height: 1.5;
-            color: #222;
-        }
+        const wavePosition = gl.getAttribLocation(waveProgram, 'aPosition');
+        const waveOffset = gl.getUniformLocation(waveProgram, 'uOffset');
+        const waveScale = gl.getUniformLocation(waveProgram, 'uScale');
+        const waveRings = gl.getUniformLocation(waveProgram, 'uRings');
+        const waveOpacity = gl.getUniformLocation(waveProgram, 'uOpacity');
+        const screenPosition = gl.getAttribLocation(compositeProgram, 'aPosition');
+        const uniform = (name) => gl.getUniformLocation(compositeProgram, name);
 
-        /* 暗色模式适配 */
-        body.dark .calendar-sidebar {
-            background: rgba(45, 45, 45, 0.7);
-            color: #eee;
-            box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.3),
-                0 0 15px rgba(255, 111, 145, 0.15) inset;
-            border: 1px solid rgba(255, 111, 145, 0.2);
-        }
+        const waveBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, waveBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+            -1, -1, 1, -1, -1, 1,
+            -1, 1, 1, -1, 1, 1
+        ]), gl.STATIC_DRAW);
 
-        body.dark .calendar-body p {
-            color: #ccc;
+        const screenBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, screenBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+            -1, -1, 1, -1, -1, 1,
+            -1, 1, 1, -1, 1, 1
+        ]), gl.STATIC_DRAW);
+
+        const videoTexture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, videoTexture);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([255, 255, 255, 255]));
+
+        const displacementTexture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, displacementTexture);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 2, 2, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+        const displacementFramebuffer = gl.createFramebuffer();
+        gl.bindFramebuffer(gl.FRAMEBUFFER, displacementFramebuffer);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, displacementTexture, 0);
+        if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) {
+            mount.dataset.rippleStatus = 'framebuffer-error';
+            return;
         }
-    </style>
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+        const waves = Array.from({ length: MAX_WAVES }, () => ({
+            x: 0,
+            y: 0,
+            scale: START_SCALE,
+            target: START_SCALE,
+            opacity: 0
+        }));
+        let waveIndex = 0;
+        let width = 1;
+        let height = 1;
+        let fieldWidth = 2;
+        let fieldHeight = 2;
+        let previousX = 0;
+        let previousY = 0;
+        let previousTime = 0;
+        let lastVideoUpload = 0;
+        let hasTexture = false;
+        let rafId = 0;
+        let disposed = false;
+
+        const hexToRGB = (hex) => {
+            const clean = hex.replace('#', '');
+            const full = clean.length === 3 ? clean.split('').map((c) => c + c).join('') : clean;
+            const value = parseInt(full, 16);
+            if (Number.isNaN(value)) return [1, 1, 1];
+            return [((value >> 16) & 255) / 255, ((value >> 8) & 255) / 255, (value & 255) / 255];
+        };
+
+        const allocateDisplacement = () => {
+            gl.bindTexture(gl.TEXTURE_2D, displacementTexture);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, fieldWidth, fieldHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+        };
+
+        const resize = () => {
+            const rect = mount.getBoundingClientRect();
+            const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+            width = Math.max(1, rect.width);
+            height = Math.max(1, rect.height);
+            const pixelWidth = Math.max(1, Math.round(width * dpr));
+            const pixelHeight = Math.max(1, Math.round(height * dpr));
+            if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+                canvas.width = pixelWidth;
+                canvas.height = pixelHeight;
+            }
+            const quality = window.innerWidth < 760 ? 0.34 : 0.48;
+            const nextFieldWidth = Math.max(2, Math.round(pixelWidth * quality));
+            const nextFieldHeight = Math.max(2, Math.round(pixelHeight * quality));
+            if (nextFieldWidth !== fieldWidth || nextFieldHeight !== fieldHeight) {
+                fieldWidth = nextFieldWidth;
+                fieldHeight = nextFieldHeight;
+                allocateDisplacement();
+            }
+        };
+
+        const addWave = (x, y, power) => {
+            const wave = waves[waveIndex];
+            waveIndex = (waveIndex + 1) % MAX_WAVES;
+            wave.x = x;
+            wave.y = y;
+            wave.scale = START_SCALE * power;
+            wave.target = START_SCALE * 5 * power;
+            wave.opacity = 1;
+        };
+
+        const localPoint = (event) => {
+            const rect = mount.getBoundingClientRect();
+            if (
+                event.clientX < rect.left ||
+                event.clientX > rect.right ||
+                event.clientY < rect.top ||
+                event.clientY > rect.bottom
+            ) return null;
+            return [event.clientX - rect.left, rect.height - (event.clientY - rect.top)];
+        };
+
+        const onPointerMove = (event) => {
+            const point = localPoint(event);
+            if (!point) return;
+            if (Math.abs(point[0] - previousX) > 15 || Math.abs(point[1] - previousY) > 15) {
+                addWave(point[0], point[1], 1);
+                previousX = point[0];
+                previousY = point[1];
+            }
+        };
+
+        const onPointerDown = (event) => {
+            const point = localPoint(event);
+            if (point) addWave(point[0], point[1], 2);
+        };
+
+        const uploadVideoFrame = (now) => {
+            if (video.readyState < 2 || !video.videoWidth || !video.videoHeight) return;
+            if (now - lastVideoUpload < 32) return;
+            lastVideoUpload = now;
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+            gl.bindTexture(gl.TEXTURE_2D, videoTexture);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
+            if (!hasTexture) {
+                hasTexture = true;
+                mount.dataset.rippleStatus = 'ready';
+                mount.classList.add('webgl-ready');
+            }
+        };
+
+        const render = (now) => {
+            if (disposed) return;
+            rafId = requestAnimationFrame(render);
+            uploadVideoFrame(now);
+            if (!hasTexture) return;
+
+            const delta = previousTime ? Math.min(0.05, (now - previousTime) / 1000) : 0;
+            previousTime = now;
+            const growth = 1 - Math.exp(-delta * 1.09);
+            const decay = Math.exp((-delta * LIFE_CONSTANT) / 3);
+
+            gl.bindFramebuffer(gl.FRAMEBUFFER, displacementFramebuffer);
+            gl.viewport(0, 0, fieldWidth, fieldHeight);
+            gl.clearColor(0, 0, 0, 0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            gl.disable(gl.DEPTH_TEST);
+            gl.enable(gl.BLEND);
+            gl.blendFunc(gl.ONE, gl.ONE);
+            gl.useProgram(waveProgram);
+            gl.bindBuffer(gl.ARRAY_BUFFER, waveBuffer);
+            gl.enableVertexAttribArray(wavePosition);
+            gl.vertexAttribPointer(wavePosition, 2, gl.FLOAT, false, 0, 0);
+            gl.uniform1f(waveRings, 4);
+
+            for (let i = 0; i < MAX_WAVES; i += 1) {
+                const wave = waves[i];
+                if (wave.opacity <= 0.002) {
+                    wave.opacity = 0;
+                    continue;
+                }
+                wave.opacity *= decay;
+                wave.scale += (wave.target - wave.scale) * growth;
+                if (wave.opacity < 0.002) continue;
+                const half = (wave.scale * 50) / 2;
+                gl.uniform2f(waveOffset, (wave.x / width) * 2 - 1, (wave.y / height) * 2 - 1);
+                gl.uniform2f(waveScale, (half / width) * 2, (half / height) * 2);
+                gl.uniform1f(waveOpacity, wave.opacity);
+                gl.drawArrays(gl.TRIANGLES, 0, 6);
+            }
+
+            gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+            gl.viewport(0, 0, canvas.width, canvas.height);
+            gl.disable(gl.BLEND);
+            gl.clearColor(0, 0, 0, 1);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            gl.useProgram(compositeProgram);
+            gl.bindBuffer(gl.ARRAY_BUFFER, screenBuffer);
+            gl.enableVertexAttribArray(screenPosition);
+            gl.vertexAttribPointer(screenPosition, 2, gl.FLOAT, false, 0, 0);
+            gl.activeTexture(gl.TEXTURE0);
+            gl.bindTexture(gl.TEXTURE_2D, videoTexture);
+            gl.uniform1i(uniform('uTexture'), 0);
+            gl.activeTexture(gl.TEXTURE1);
+            gl.bindTexture(gl.TEXTURE_2D, displacementTexture);
+            gl.uniform1i(uniform('uDisplacement'), 1);
+            gl.uniform2f(uniform('uResolution'), canvas.width, canvas.height);
+            gl.uniform2f(uniform('uTextureSize'), video.videoWidth || 1, video.videoHeight || 1);
+            gl.uniform2f(uniform('uTexel'), 1 / fieldWidth, 1 / fieldHeight);
+            gl.uniform3fv(uniform('uTint'), hexToRGB('#e56f94'));
+            gl.uniform3fv(uniform('uHighlight'), [1, 1, 1]);
+            gl.uniform1f(uniform('uStrength'), 0.2);
+            gl.uniform1f(uniform('uSwirl'), 1);
+            gl.uniform1f(uniform('uDispersion'), 0.08);
+            gl.uniform1f(uniform('uGlint'), 0.18);
+            gl.uniform1f(uniform('uTintAmount'), 0.08);
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+        };
+
+        const onContextLost = (event) => {
+            event.preventDefault();
+            disposed = true;
+            cancelAnimationFrame(rafId);
+            mount.classList.remove('webgl-ready');
+        };
+
+        const resizeObserver = new ResizeObserver(resize);
+        resizeObserver.observe(mount);
+        resize();
+        mount.dataset.rippleStatus = 'initializing';
+        window.addEventListener('pointermove', onPointerMove, { passive: true });
+        window.addEventListener('pointerdown', onPointerDown, { passive: true });
+        canvas.addEventListener('webglcontextlost', onContextLost);
+        video.play().catch(() => {});
+        rafId = requestAnimationFrame(render);
+    })();
+</script>
 </body>
 </html>
